@@ -1,7 +1,7 @@
 const Dashboard = () => {
     console.log('DashBoard component rendered');
     return (
-      <div>Dashboard</div>
+      <div className="text-6xl">Dashboard</div>
     )
   }
   
