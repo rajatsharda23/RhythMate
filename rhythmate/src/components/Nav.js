@@ -1,11 +1,12 @@
 import whitelogo from '../images/RhythMate-logos_white.png'
 import colourlogo from '../images/RhythMate-logos.jpeg'
 
-const Nav = ({minimal, authToken, setShowModal, showModal}) => {
+const Nav = ({minimal, authToken, setShowModal, showModal, setisSignup}) => {
     console.log('Nav component rendered');  
 
     const handleClick = () =>{
         setShowModal(true)
+        setisSignup(false)
     }
 
     return (
