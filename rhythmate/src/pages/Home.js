@@ -18,7 +18,12 @@ const Home = () => {
 
     return (
         <div className= "absolute h-full w-screen bg-cover" style={{backgroundImage: `url(${backgroundImage})`}}>
-        <Nav minimal={false} authToken={authToken} setShowModal={setShowModal} showModal={showModal} setisSignup={setisSignup} />
+        <Nav 
+        minimal={false} 
+        setShowModal={setShowModal} 
+        showModal={showModal} 
+        setisSignup={setisSignup} 
+        />
             <div className= "m-0 p-2 text-center">
                 <h1 className='text-6xl font-readex p-8'>Swipe Right®</h1>
                 <CCloseButton className='bg-black' />
