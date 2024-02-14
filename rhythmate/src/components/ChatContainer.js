@@ -4,7 +4,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 const ChatContainer = () => {
 
     return (
-        <div> Chat-Container  Hello</div>
+        <div className="bg-gray-200 h-screen w-[35%]"> Chat-Container  Hello</div>
     )
     
   }
