@@ -44,7 +44,7 @@ app.post('/signup', async (req,res) => {
             expiresIn : 60 * 1
         })
 
-        res.status(201).json({token, userId: generateUserId, email: sanitizedEmail})
+        res.status(201).json({ token, userId: generateUserId})
 
     } catch(err) {
         console.log(err)
@@ -70,7 +70,7 @@ app.post('/login', async (req,res) => {
             const token = jwt.sign(user, temp, {
                 expiresIn : 60 * 1
             })
-            res.status(201).json({ token, user: user.userId, email: temp })
+            res.status(201).json({ token, userId: user.userId})
             return
         }
         
@@ -94,5 +94,57 @@ app.get('/users', async(req,res) => {
     }
 
 })
+
+app.put('/users', async (req,res)=>{
+    const client = new MongoClient(uri)
+    const formData = req.body.formData 
+
+    try{
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
+        const user = await users.findOne({ userId: formData.userId })
+        const query = { userId: formData.userId }
+        const updateDocument = {
+            $set: {
+                first_name : formData.first_name,
+                dob_day : formData.dob_day,
+                dob_month : formData.dob_month,
+                dob_year : formData.dob_year,
+                show_gender : formData.show_gender,
+                gender_identity : formData.gender_identity,
+                gender_interest : formData.gender_interest,
+                url : formData.url,
+                about : formData.about,
+                matches : formData.matches
+            },
+        }
+
+        const insertedUser = await users.updateOne(query, updateDocument)
+        console.log(insertedUser, user)
+        res.send(insertedUser)
+
+    } finally {
+        await client.close()
+    }
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(PORT, () => console.log('Server runnning on PORT ' + PORT))

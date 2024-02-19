@@ -1,9 +1,15 @@
 import {useState} from 'react'
 import Nav from '../components/Nav'
+import { useCookies } from 'react-cookie'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const Onboarding = () => {
+  let navigate = useNavigate()
+  const [cookies, setCookie, removeCookie] = useCookies(['user'])
+
   const [formData, setFormData] = useState({
-    user_id : '',
+    userId : cookies.userId,
     first_name : '',
     dob_day : '',
     dob_month : '',
@@ -11,7 +17,6 @@ const Onboarding = () => {
     show_gender : false,
     gender_identity : 'man',
     gender_interest : 'woman',
-    email : '',
     url : '',
     about : '',
     matches : []
@@ -28,8 +33,21 @@ const Onboarding = () => {
     }))
   }
 
-  const handleSubmit = () => {
-    console.log('submitted')
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try{
+      const response = await axios.put('http://localhost:8000/users', { formData })
+      const success = response.statusCode===200
+      console.log(response.status)
+      console.log(success)
+      if(success) navigate('/dashboard')
+    } catch(err){
+      console.log(err)
+    }
+    
+    console.log('*****')
+
   }
 
   console.log(formData)
@@ -193,7 +211,7 @@ const Onboarding = () => {
                 onChange={handleChange}
               />
               <div className='rounded border-zinc-950 border-double right-0 left-0 mr-30 ml-[38%]'>
-                <img src={formData.url} alt="Profile photo Preview" className='w-[40%] justify-center  right-0 left-0 '/>
+                { formData.url && <img src={formData.url} alt="Profile photo Preview" className='w-[40%] justify-center  right-0 left-0 '/>}
               </div>
             </section>
 
