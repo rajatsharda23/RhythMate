@@ -1,21 +1,42 @@
 import { useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
 
 const AuthModal = ({setShowModal, isSignup}) => {
 
     const [email, setEmail] = useState(null)
+    const [lowerEmail, setLowerEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [confirmpassword, setConfirmPassword] = useState(null)
     const [error, setError] = useState(null)
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
-    const handleSubmit = (e) => {
+    let navigate = useNavigate()
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             if(isSignup && password!==confirmpassword){
                 setError('Passwords need to match!')
+                return
             }
-            console.log('Make post request to our database')
+            setLowerEmail(email.toLowerCase())
+            console.log(email, '->', lowerEmail)
+            const response = await axios.post(`http://localhost:8000/${isSignup? 'signup' : 'login'}`, {email, password})
+
+            setCookie('Email', response.data.email)
+            setCookie('UserId', response.data.userId)
+            setCookie('AuthToken', response.data.token)
+
+            const success = response.status===201
+
+            console.log(response.status)
+
+            if(success && isSignup) navigate('/onboarding')
+            if(success && !isSignup) navigate('/dashboard')
+
         } catch(error){
             console.log(error)
         }
@@ -25,6 +46,7 @@ const AuthModal = ({setShowModal, isSignup}) => {
         console.log('Clicked');
         setShowModal(false);
     }
+    
     console.log(email,password,confirmpassword);
 
     return (

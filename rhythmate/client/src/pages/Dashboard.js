@@ -45,8 +45,8 @@ const Dashboard = () => {
       return (
         <div class='master' className= "fixed flex justify-between">
           <ChatContainer />
-          <div class='swiper' className = "w-screen flex  justify-center items-center">
-            <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">
+          <div class='swiper' className = "w-screen flex mt-[5%] justify-center items-center">
+            <div class='' className = "mr-[40%] mb-[60%] mt-[5%] inset-x-0 top-0">
 
               {characters.map((character) =>
               <TinderCard className='swipe' 
@@ -59,7 +59,7 @@ const Dashboard = () => {
               </TinderCard>
             )}
             
-            <div class='swiped-direction' className= "absolute text-center justify mt-[44%] ml-32 p-10"> 
+            <div class='swiped-direction' className= "absolute text-center justify mt-[34%] ml-32 p-10"> 
                 {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
             </div>
 

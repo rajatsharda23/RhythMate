@@ -35,7 +35,7 @@ const Onboarding = () => {
   console.log(formData)
     return (
 
-      <div className= "relative h-full w-screen bg-cover font-readex bg-indigo-200">
+      <div className= "relative h-full w-screen bg-cover font-readex bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-300">
          <Nav minimal={true} 
          setShowModal={() => {}} 
          showModal={false} 
