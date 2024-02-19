@@ -9,7 +9,7 @@ const Onboarding = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
   const [formData, setFormData] = useState({
-    userId : cookies.userId,
+    user_id : cookies.UserId,
     first_name : '',
     dob_day : '',
     dob_month : '',
@@ -38,7 +38,7 @@ const Onboarding = () => {
 
     try{
       const response = await axios.put('http://localhost:8000/users', { formData })
-      const success = response.statusCode===200
+      const success = response.status===200
       console.log(response.status)
       console.log(success)
       if(success) navigate('/dashboard')

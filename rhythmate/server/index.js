@@ -34,7 +34,7 @@ app.post('/signup', async (req,res) => {
         }
 
         const data = {
-            userId : generateUserId,
+            user_id : generateUserId,
             email : sanitizedEmail,
             hashedPassowrd : hashedPassowrd,
         }
@@ -44,7 +44,7 @@ app.post('/signup', async (req,res) => {
             expiresIn : 60 * 1
         })
 
-        res.status(201).json({ token, userId: generateUserId})
+        res.status(201).json({ token, user_id: generateUserId})
 
     } catch(err) {
         console.log(err)
@@ -70,7 +70,7 @@ app.post('/login', async (req,res) => {
             const token = jwt.sign(user, temp, {
                 expiresIn : 60 * 1
             })
-            res.status(201).json({ token, userId: user.userId})
+            res.status(201).json({ token, user_id: user.user_id})
             return
         }
         
@@ -103,8 +103,12 @@ app.put('/users', async (req,res)=>{
         await client.connect()
         const database = client.db('RhythMatch')
         const users = database.collection('users')
-        const user = await users.findOne({ userId: formData.userId })
-        const query = { userId: formData.userId }
+        console.log(formData)
+        const user = await users.findOne({ user_id: formData.user_id })
+        // if(!user){
+        //     res.status(404).send('User not Found')
+        // }
+        const query = { user_id: formData.user_id }
         const updateDocument = {
             $set: {
                 first_name : formData.first_name,
@@ -121,7 +125,7 @@ app.put('/users', async (req,res)=>{
         }
 
         const insertedUser = await users.updateOne(query, updateDocument)
-        console.log(insertedUser, user)
+        console.log(user)
         res.send(insertedUser)
 
     } finally {
