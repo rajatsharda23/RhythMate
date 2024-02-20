@@ -5,7 +5,6 @@ const ChatDisplay = () => {
 
     return (
         <>
-        Hi
         <Chat />
         <ChatInput />
         </>

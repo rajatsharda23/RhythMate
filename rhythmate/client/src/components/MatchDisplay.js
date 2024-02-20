@@ -1,7 +1,7 @@
 const MatchDisplay = () => {
 
     return (
-        <div className="m-2 p-2"> MatchDisplay</div>
+        <div className="m-2 p-2"> </div>
     )
     
   }

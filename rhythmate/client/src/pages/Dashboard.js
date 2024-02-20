@@ -1,10 +1,31 @@
 import ChatContainer from "../components/ChatContainer";
 import TinderCard from 'react-tinder-card'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 import backgroundImage from '../images/bg-1.png'
 
 const Dashboard = () => {
-    console.log('Dashboard component rendered');
+
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const [user, setUser] = useState(null)
+    const userId = cookies.UserId    
+
+    const getUser = async () => {
+      try{
+          const response = await axios.get('http://localhost:8000/user', {
+          params: {userId}
+        })
+        setUser(response.data)
+      } catch(err){
+        console.log(err)
+      }
+    }
+    useEffect(()=>{
+      getUser()
+    }, [])
+    
+    console.log('user ->', user)
 
     const db = [
   {
@@ -43,8 +64,9 @@ const Dashboard = () => {
 
     
       return (
-        <div class='master' className= "fixed flex justify-between">
-          <ChatContainer />
+      <>
+        {user && <div class='master' className= "fixed flex justify-between">
+          <ChatContainer user={user}/>
           <div class='swiper' className = "w-screen flex  justify-center items-center">
             <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">
 
@@ -65,7 +87,8 @@ const Dashboard = () => {
 
             </div>
           </div>
-        </div>
+        </div>}
+      </>  
       )
     }
     

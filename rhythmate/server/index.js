@@ -103,11 +103,7 @@ app.put('/users', async (req,res)=>{
         await client.connect()
         const database = client.db('RhythMatch')
         const users = database.collection('users')
-        console.log(formData)
         const user = await users.findOne({ user_id: formData.user_id })
-        // if(!user){
-        //     res.status(404).send('User not Found')
-        // }
         const query = { user_id: formData.user_id }
         const updateDocument = {
             $set: {
@@ -125,7 +121,6 @@ app.put('/users', async (req,res)=>{
         }
 
         const insertedUser = await users.updateOne(query, updateDocument)
-        console.log(user)
         res.send(insertedUser)
 
     } finally {
@@ -135,14 +130,23 @@ app.put('/users', async (req,res)=>{
 })
 
 
+app.get('/user', async (req, res) => {
+    const client = new MongoClient(uri)
+    const userId = req.query.userId
 
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
 
+        const query = {user_id: userId}
+        const user = await users.findOne(query)
+        res.send(user)
 
-
-
-
-
-
+    } finally {
+        await client.close()
+    }
+})
 
 
 
