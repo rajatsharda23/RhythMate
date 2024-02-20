@@ -80,20 +80,25 @@ app.post('/login', async (req,res) => {
     }
 })
 
-app.get('/users', async(req,res) => {
+app.get('/gendered-users', async(req,res) => {
     const client = new MongoClient(uri)
+    const gender = req.query.gender
 
+    // console.log('gender', gender) 
+    
     try{
         await client.connect()
         const database = client.db('RhythMatch')
         const users = database.collection('users')
-        const returnedUser = await users.find().toArray()
-        res.send(returnedUser)
+        const query = { gender_identity: gender }
+        const foundUsers = await users.find(query).toArray()
+        res.send(foundUsers)
     } finally {
         await client.close()
     }
 
 })
+
 
 app.put('/users', async (req,res)=>{
     const client = new MongoClient(uri)
