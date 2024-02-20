@@ -25,9 +25,9 @@ const AuthModal = ({setShowModal, isSignup}) => {
             setLowerEmail(email.toLowerCase())
             console.log(email, '->', lowerEmail)
             const response = await axios.post(`http://localhost:8000/${isSignup? 'signup' : 'login'}`, {email, password})
-
+            console.log(response.data)
             setCookie('AuthToken', response.data.token)
-            setCookie('UserId', response.data.userId)
+            setCookie('UserId', response.data.user_id)
 
             const success = response.status===201
 
@@ -35,6 +35,8 @@ const AuthModal = ({setShowModal, isSignup}) => {
 
             if(success && isSignup) navigate('/onboarding')
             if(success && !isSignup) navigate('/dashboard')
+
+            window.location.reload()
 
         } catch(error){
             console.log(error)

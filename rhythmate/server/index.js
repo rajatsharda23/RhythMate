@@ -15,6 +15,8 @@ app.get('/', (req,res) => {
     res.json('Hello to my App')
 })
 
+app.listen(PORT, () => console.log('Server runnning on PORT ' + PORT))
+
 app.post('/signup', async (req,res) => {
     const client = new MongoClient(uri)
     const {email, password} = req.body
@@ -34,7 +36,7 @@ app.post('/signup', async (req,res) => {
         }
 
         const data = {
-            userId : generateUserId,
+            user_id : generateUserId,
             email : sanitizedEmail,
             hashedPassowrd : hashedPassowrd,
         }
@@ -44,7 +46,7 @@ app.post('/signup', async (req,res) => {
             expiresIn : 60 * 1
         })
 
-        res.status(201).json({ token, userId: generateUserId})
+        res.status(201).json({ token, user_id: generateUserId})
 
     } catch(err) {
         console.log(err)
@@ -70,7 +72,7 @@ app.post('/login', async (req,res) => {
             const token = jwt.sign(user, temp, {
                 expiresIn : 60 * 1
             })
-            res.status(201).json({ token, userId: user.userId})
+            res.status(201).json({ token, user_id: user.user_id})
             return
         }
         
@@ -80,20 +82,25 @@ app.post('/login', async (req,res) => {
     }
 })
 
-app.get('/users', async(req,res) => {
+app.get('/gendered-users', async(req,res) => {
     const client = new MongoClient(uri)
+    const gender = req.query.gender
 
+    // console.log('gender', gender) 
+    
     try{
         await client.connect()
         const database = client.db('RhythMatch')
         const users = database.collection('users')
-        const returnedUser = await users.find().toArray()
-        res.send(returnedUser)
+        const query = { gender_identity: gender }
+        const foundUsers = await users.find(query).toArray()
+        res.send(foundUsers)
     } finally {
         await client.close()
     }
 
 })
+
 
 app.put('/users', async (req,res)=>{
     const client = new MongoClient(uri)
@@ -103,8 +110,8 @@ app.put('/users', async (req,res)=>{
         await client.connect()
         const database = client.db('RhythMatch')
         const users = database.collection('users')
-        const user = await users.findOne({ userId: formData.userId })
-        const query = { userId: formData.userId }
+        const user = await users.findOne({ user_id: formData.user_id })
+        const query = { user_id: formData.user_id }
         const updateDocument = {
             $set: {
                 first_name : formData.first_name,
@@ -121,7 +128,6 @@ app.put('/users', async (req,res)=>{
         }
 
         const insertedUser = await users.updateOne(query, updateDocument)
-        console.log(insertedUser, user)
         res.send(insertedUser)
 
     } finally {
@@ -129,22 +135,102 @@ app.put('/users', async (req,res)=>{
     }
 
 })
+ 
+
+app.get('/user', async (req, res) => {
+    const client = new MongoClient(uri)
+    const userId = req.query.userId
+
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
+
+        const query = {user_id: userId}
+        const user = await users.findOne(query)
+        res.send(user)
+
+    } finally {
+        await client.close()
+    }
+})
+
+app.put('/addmatch', async (req, res) => {
+    const client = new MongoClient(uri)
+    const {userId, matchedUserId} = req.body
+    console.log('**')
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
+
+        const query = {user_id: userId}
+        const updateDocument = {
+            $push: {matches: {user_id: matchedUserId}}
+        }
+        const user = await users.updateOne(query, updateDocument)
+        res.send(user)
+        console.log(user)
+    } finally {
+        await client.close()
+    }
+})
+
+app.get('/users', async (req, res) => {
+    const client = new MongoClient(uri)
+    const userIds = JSON.parse(req.query.userIds)
+    
+    
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
+
+        const pipeline = 
+        [
+            {
+                '$match': {
+                    user_id : {
+                        '$in' : userIds
+                    }
+                }
+            }
+        ]
+
+        const foundUsers = await users.aggregate(pipeline).toArray()
+        console.log(foundUsers)
+        res.send(foundUsers)
+    } finally {
+        await client.close()
+    }
+})
+
+
+
+
+
+app.get('/messages', async (req,res) => {
+    const client = new MongoClient(uri)
+    const { userId, correspondingUserId } = req.query
+    
+    try{
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const messages = database.collection('messages')
+
+        const query = {
+            from_userId: userId,
+            to_userId: correspondingUserId
+        }
+        const foundMessages = await messages.find(query).toArray()
+        res.send(foundMessages)
+    } finally {
+        await client.close()
+    }
+})
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-app.listen(PORT, () => console.log('Server runnning on PORT ' + PORT))
