@@ -19,6 +19,7 @@ const Dashboard = () => {
           params: {userId}
         })
         setUser(response.data)
+        console.log('###')
       } catch(err){
         console.log(err)
       }
@@ -31,15 +32,23 @@ const Dashboard = () => {
           params: { gender : user?.gender_interest }
         })
         setGenderedUser(response.data)
+        console.log('****')
       } catch(err) {
         console.log(err)
       }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
       getUser()
-      getGenderedUser()
-    }, [user, genderedUser])
+
+  }, [])
+
+  useEffect(() => {
+      if (user) {
+          getGenderedUser()
+      }
+  }, [user])
+
     
     // console.log('gendered-user ->', genderedUser)
 
@@ -50,13 +59,13 @@ const Dashboard = () => {
           matchedUserId
         })
         getUser()
-        console.log('hello')
+        // console.log('hello')
       } catch(err) {
         console.log(err)
       }
     }
 
-    console.log('user ->', user)
+    // console.log('user ->', user)
       
     const swiped = (direction, swipedUserId) => {
       
@@ -79,7 +88,7 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && genderedUser && <div class='master' className= "fixed flex justify-between">
+        {user && genderedUser &&  <div class='master' className= "fixed flex justify-between">
           <ChatContainer user={user}/>
           <div class='swiper' className = "w-screen flex  justify-center items-center">
             <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">

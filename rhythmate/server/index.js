@@ -15,6 +15,8 @@ app.get('/', (req,res) => {
     res.json('Hello to my App')
 })
 
+app.listen(PORT, () => console.log('Server runnning on PORT ' + PORT))
+
 app.post('/signup', async (req,res) => {
     const client = new MongoClient(uri)
     const {email, password} = req.body
@@ -174,11 +176,61 @@ app.put('/addmatch', async (req, res) => {
     }
 })
 
+app.get('/users', async (req, res) => {
+    const client = new MongoClient(uri)
+    const userIds = JSON.parse(req.query.userIds)
+    
+    
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const users = database.collection('users')
+
+        const pipeline = 
+        [
+            {
+                '$match': {
+                    user_id : {
+                        '$in' : userIds
+                    }
+                }
+            }
+        ]
+
+        const foundUsers = await users.aggregate(pipeline).toArray()
+        console.log(foundUsers)
+        res.send(foundUsers)
+    } finally {
+        await client.close()
+    }
+})
+
+
+
+
+
+app.get('/messages', async (req,res) => {
+    const client = new MongoClient(uri)
+    const { userId, correspondingUserId } = req.query
+    
+    try{
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const messages = database.collection('messages')
+
+        const query = {
+            from_userId: userId,
+            to_userId: correspondingUserId
+        }
+        const foundMessages = await messages.find(query).toArray()
+        res.send(foundMessages)
+    } finally {
+        await client.close()
+    }
+})
 
 
 
 
 
 
-
-app.listen(PORT, () => console.log('Server runnning on PORT ' + PORT))
