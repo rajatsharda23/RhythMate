@@ -41,12 +41,29 @@ const Dashboard = () => {
       getGenderedUser()
     }, [user, genderedUser])
     
-    // console.log('user ->', user)
+    // console.log('gendered-user ->', genderedUser)
 
-    console.log('gendered-user ->', genderedUser)
+    const updateMatches = async (matchedUserId) => {
+      try{
+        await axios.put('http://localhost:8000/addmatch', {
+          userId, 
+          matchedUserId
+        })
+        getUser()
+        console.log('hello')
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
+    console.log('user ->', user)
       
-    const swiped = (direction, nameToDelete) => {
-      console.log('removing: ' + nameToDelete)
+    const swiped = (direction, swipedUserId) => {
+      
+      if(direction==='right'){
+        updateMatches(swipedUserId)
+      }
+
       setLastDirection(direction)
     }
   
@@ -57,7 +74,7 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && <div class='master' className= "fixed flex justify-between">
+        {user && genderedUser && <div class='master' className= "fixed flex justify-between">
           <ChatContainer user={user}/>
           <div class='swiper' className = "w-screen flex  justify-center items-center">
             <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">
@@ -65,13 +82,14 @@ const Dashboard = () => {
               {genderedUser.map((genderedUser) =>
               <TinderCard className='swipe' 
                 key={genderedUser.first_name} 
-                onSwipe={(dir) => swiped(dir, genderedUser.first_name)} 
+                onSwipe={(dir) => swiped(dir, genderedUser.user_id)} 
                 onCardLeftScreen={() => outOfFrame(genderedUser.first_name)}>
                 <div style={{ backgroundImage: 'url(' + genderedUser.url + ')' }} className='card'>
                   <h3>{genderedUser.first_name}</h3>
                 </div>
-              </TinderCard>
+              </TinderCard>  
             )}
+  
             
             <div class='swiped-direction' className= "absolute text-center justify mt-[44%] ml-32 p-10"> 
                 {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
