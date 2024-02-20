@@ -14,7 +14,7 @@ const ChatContainer = ({ user }) => {
                 <button class='option' className="p-3 m-3 mx-14 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/chat">Chats</button>  
             </div>
 
-            <MatchDisplay />
+            <MatchDisplay matches={user.matches}/>
             <ChatDisplay />
 
         </div>

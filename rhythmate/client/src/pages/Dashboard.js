@@ -71,6 +71,11 @@ const Dashboard = () => {
       console.log(name + ' left the screen!')
     }
 
+    const matchedUserIds = user?.matches.map(({user_id}) => user_id).concat(userId) 
+    const filteredGenderedUsers = genderedUser?.filter(
+      genderedUser => !matchedUserIds.includes(genderedUser.user_id)
+    )
+
     
       return (
       <>
@@ -79,7 +84,7 @@ const Dashboard = () => {
           <div class='swiper' className = "w-screen flex  justify-center items-center">
             <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">
 
-              {genderedUser.map((genderedUser) =>
+              {filteredGenderedUsers.map((genderedUser) =>
               <TinderCard className='swipe' 
                 key={genderedUser.first_name} 
                 onSwipe={(dir) => swiped(dir, genderedUser.user_id)} 
