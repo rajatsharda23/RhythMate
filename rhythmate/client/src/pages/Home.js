@@ -2,14 +2,22 @@ import Nav from '../components/Nav'
 import AuthModal from '../components/AuthModal'
 import { CCloseButton } from '@coreui/react'
 import {useState} from 'react'
+import { useCookies } from "react-cookie";
 import backgroundImage from '../images/bg-1.png'
 
 const Home = () => {
 
     const [showModal, setShowModal] = useState(false)
     const [isSignup, setisSignup] = useState(true)
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
-    const authToken = false
+    const authToken = cookies.AuthToken
+
+    if(authToken){
+        removeCookie('UserId',cookies.userId)
+        removeCookie('AuthToken',cookies.AuthToken)
+        window.location.reload()
+    }
 
     const handleClick = () => {
         setShowModal(true);
@@ -19,6 +27,7 @@ const Home = () => {
     return (
         <div className= "absolute h-full w-screen bg-cover" style={{backgroundImage: `url(${backgroundImage})`}}>
         <Nav 
+        authToken={authToken}
         minimal={false} 
         setShowModal={setShowModal} 
         showModal={showModal} 

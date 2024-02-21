@@ -1,7 +1,7 @@
 import whitelogo from '../images/RhythMate-logos_white.png'
 import colourlogo from '../images/RhythMate-logos_transparent.png'
 
-const Nav = ({minimal, setShowModal, showModal, setisSignup}) => {
+const Nav = ({authToken,minimal, setShowModal, showModal, setisSignup}) => {
     console.log('Nav component rendered');  
 
     const handleClick = () =>{
@@ -9,7 +9,6 @@ const Nav = ({minimal, setShowModal, showModal, setisSignup}) => {
         setisSignup(false)
     }
 
-    const authToken = false
     return (
       <nav className='w-screen h-16 flex'>
         <div className='m-15 h-16 mr-auto'>

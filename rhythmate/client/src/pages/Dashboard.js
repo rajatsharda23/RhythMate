@@ -19,7 +19,6 @@ const Dashboard = () => {
           params: {userId}
         })
         setUser(response.data)
-        console.log('###')
       } catch(err){
         console.log(err)
       }
@@ -32,7 +31,6 @@ const Dashboard = () => {
           params: { gender : user?.gender_interest }
         })
         setGenderedUser(response.data)
-        console.log('****')
       } catch(err) {
         console.log(err)
       }
@@ -88,14 +86,14 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && genderedUser &&  <div class='master' className= "fixed flex justify-between">
+        {user && genderedUser &&  <div className= "fixed flex justify-between">
           <ChatContainer user={user}/>
-          <div class='swiper' className = "w-screen flex  justify-center items-center">
-            <div class='' className = "mr-[40%] mb-[60%] inset-x-0 top-0">
+          <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
+            <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
 
               {filteredGenderedUsers.map((genderedUser) =>
               <TinderCard className='swipe' 
-                key={genderedUser.first_name} 
+                key={genderedUser.user_id} 
                 onSwipe={(dir) => swiped(dir, genderedUser.user_id)} 
                 onCardLeftScreen={() => outOfFrame(genderedUser.first_name)}>
                 <div style={{ backgroundImage: 'url(' + genderedUser.url + ')' }} className='card'>
@@ -105,7 +103,7 @@ const Dashboard = () => {
             )}
   
             
-            <div class='swiped-direction' className= "absolute text-center justify mt-[44%] ml-32 p-10"> 
+            <div className= "absolute text-center justify mt-[44%] ml-32 p-10"> {/*swiped-directionr*/} 
                 {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
             </div>
 
