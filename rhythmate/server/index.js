@@ -5,7 +5,9 @@ const { v4 : uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const bcrypt = require('bcrypt')
-const uri = 'mongodb+srv://rajatsharda23:Tinu17109@cluster0.tjy2edi.mongodb.net/?retryWrites=true&w=majority'
+require('dotenv').config()
+
+const uri = process.env.URI
 
 const app = express()
 app.use(cors())
@@ -50,7 +52,6 @@ app.post('/signup', async (req,res) => {
 
     } catch(err) {
         console.log(err)
-        console.log('err')
     }
 
 })
@@ -158,7 +159,7 @@ app.get('/user', async (req, res) => {
 app.put('/addmatch', async (req, res) => {
     const client = new MongoClient(uri)
     const {userId, matchedUserId} = req.body
-    console.log('**')
+    // console.log('**')
     try {
         await client.connect()
         const database = client.db('RhythMatch')
@@ -170,7 +171,7 @@ app.put('/addmatch', async (req, res) => {
         }
         const user = await users.updateOne(query, updateDocument)
         res.send(user)
-        console.log(user)
+        // console.log(user)
     } finally {
         await client.close()
     }
@@ -198,16 +199,12 @@ app.get('/users', async (req, res) => {
         ]
 
         const foundUsers = await users.aggregate(pipeline).toArray()
-        console.log(foundUsers)
+        // console.log(foundUsers)
         res.send(foundUsers)
     } finally {
         await client.close()
     }
 })
-
-
-
-
 
 app.get('/messages', async (req,res) => {
     const client = new MongoClient(uri)
@@ -227,6 +224,25 @@ app.get('/messages', async (req,res) => {
     } finally {
         await client.close()
     }
+})
+
+app.post('/message', async (req, res) => {
+    const client = new MongoClient(uri)
+    const message = req.body.message
+
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const messages = database.collection('messages')
+
+        const insertedMessage = await messages.insertOne(message)
+        res.send(insertedMessage)
+        console.log(insertedMessage)
+    } finally {
+        await client.close()
+    }
+
+    
 })
 
 

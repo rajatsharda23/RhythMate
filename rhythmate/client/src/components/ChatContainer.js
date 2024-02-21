@@ -12,8 +12,8 @@ const ChatContainer = ({ user }) => {
             <ChatHeader user = {user}/>
     
             <div className=""> 
-                <button class='option' className="p-3 m-3 mx-14 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/match" onClick={()=> setClickedUser(null)}>Matches</button>  
-                <button class='option' className="p-3 m-3 mx-14 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/chat" disabled={!clickedUser}>Chats</button>  
+                <button className="p-3 m-3 mx-14 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/match" onClick={()=> setClickedUser(null)}>Matches</button>  
+                <button  className="p-3 m-3 mx-14 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/chat" disabled={!clickedUser}>Chats</button>  
             </div>
 
             {!clickedUser && <MatchDisplay matches={user.matches} setClickedUser={setClickedUser}/>}
