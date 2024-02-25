@@ -86,7 +86,7 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && genderedUser &&  <div className= "fixed flex justify-between">
+        {user && genderedUser &&  <div className= "relative flex justify-between ">
           <ChatContainer user={user}/>
           <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
             <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">

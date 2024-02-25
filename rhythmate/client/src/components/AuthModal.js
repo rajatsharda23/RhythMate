@@ -17,15 +17,17 @@ const AuthModal = ({setShowModal, isSignup}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        console.log('hi')
         try{
             if(isSignup && password!==confirmpassword){
                 setError('Passwords need to match!')
                 return
             }
             setLowerEmail(email.toLowerCase())
-            console.log(email, '->', lowerEmail)
+            // console.log(email, '->', lowerEmail)
             const response = await axios.post(`http://localhost:8000/${isSignup? 'signup' : 'login'}`, {email, password})
             console.log(response.data)
+            console.log('hi')
             setCookie('AuthToken', response.data.token)
             setCookie('UserId', response.data.user_id)
 
@@ -44,11 +46,11 @@ const AuthModal = ({setShowModal, isSignup}) => {
     }
 
     const handleClick = () => {
-        console.log('Clicked');
+        // console.log('Clicked');
         setShowModal(false);
     }
     
-    console.log(email,password,confirmpassword);
+    // console.log(email,password,confirmpassword);
 
     return (
         <div className="absolute top-175 w-1/2 font-readex left-1/4 mx-auto m-10 max-w-360 bg-indigo-200 rounded-lg p-10  max-h-screen ">

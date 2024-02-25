@@ -2,18 +2,20 @@ const Chat = ({descendingOrderMessages}) => {
 
     return (
         
-        <div className='p-20 h-60vh overflow-y-auto'>
-            {descendingOrderMessages.map((message, _index) => (
-                <div key={_index}>
-                    <div className="chat-msg-header">
-                        <div className="img-container">
-                            <img src={message.img} alt={message.first_name + 'profile'}/>
+        <div className=' mt-40 p-5 h-60vh overflow-y-auto border-zinc-800'>
+            <div className="p-1 border bg-indigo-100 h-screen shadow">
+                {descendingOrderMessages.map((message, _index) => (
+                    <div key={_index} className="p-3 flex">
+                        <div className="chat-msg-header w-auto items-center flex flex-col ">
+                            <div className="pt-2 pl-2 h-10 w-10 truncate rounded-full">
+                                <img src={message.img} alt={message.first_name + 'profile'} className="h-[100%] w-[100%] object-cover rounded-full shadow shadow-black"/>
+                            </div>
+                            {/* <p className="bg--200">{message.name}</p> */}
                         </div>
-                        <p>{message.name}</p>
+                        <p className="border pt-2 p-2 rounded-lg ">{message.message}</p>
                     </div>
-                    <p>{message.message}</p>
-                </div>
-            ))}
+                ))} 
+            </div>
         </div>
     )
     
