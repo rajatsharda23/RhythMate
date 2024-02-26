@@ -5,14 +5,20 @@ const { v4 : uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const bcrypt = require('bcrypt')
+const querystring = require('querystring');
+const SpotifyWebApi = require('spotify-web-api-node')
+
 require('dotenv').config()
  
 const uri = process.env.URI 
-
+const client_id = '5a39f461d53f4c47bd0408d875f5d668'
+const client_secret = '26dcc340cc0342ddbdd99702a68963ba'
+const redirect_uri = 'http://localhost:3000/dashboard'
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
 
 app.get('/', (req,res) => {
     res.json('Hello to my App')
@@ -103,7 +109,6 @@ app.get('/gendered-users', async(req,res) => {
 
 })
 
-
 app.put('/users', async (req,res)=>{
     const client = new MongoClient(uri)
     const formData = req.body.formData 
@@ -180,7 +185,7 @@ app.put('/addmatch', async (req, res) => {
 
 app.get('/users', async (req, res) => {
     const client = new MongoClient(uri)
-    const userIds = JSON.parse(req.query.userIds)
+    const userIds = JSON.parse(req.query.userIds) 
     
     
     try {
@@ -242,8 +247,48 @@ app.post('/message', async (req, res) => {
     } finally {
         await client.close()
     }
+})
+ 
+const spotifyApi = new SpotifyWebApi({
+    clientId: client_id,
+    clientSecret: client_secret,
+    redirectUri: redirect_uri
+})
 
-    
+app.get('/authenticate', async (req,res) => {
+    const scopes = ['user-read-private', 'user-read-email']
+    res.redirect(spotifyApi.createAuthorizeURL(scopes)) 
+    // console.log('check')
+})
+
+app.get('/callback',(res,req)=>{
+    const error = req.query.error
+    const code = req.query.code
+    const state = req.query.state
+
+    if(error){
+        console.log('Error:',error)
+        res.send(`Error:${error}`)
+        return 
+    }
+
+    spotifyApi.authorizationCodeGrant(code).then(data=>{
+        const accessToken = data.body['access_token']
+        const refreshToken = data.body['refresh_token']
+        const expiresIn = data.body['expires_in']
+
+        spotifyApi.setAccessToken(accessToken)
+        spotifyApi.setRefreshToken(refreshToken)
+        
+        console.log(accessToken,refreshToken)
+        console.log('Success')
+
+        setInterval(async()=>{
+            const data = await spotifyApi.refreshAccessToken()
+            const accessTokenRefreshed = data.body['access_token']
+            spotifyApi.setAccessToken(accessTokenRefreshed)
+        },expiresIn/2*1000)
+    })
 })
 
 

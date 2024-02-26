@@ -2,6 +2,7 @@ import CIcon from '@coreui/icons-react'
 import { cilAccountLogout } from '@coreui/icons';
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
+import axios from "axios";
 // import dotenv from 'dotenv';
 
 // dotenv.config();
@@ -10,34 +11,32 @@ import { useEffect, useState } from 'react';
 const ChatHeader = ({ user }) => {
 
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
-    const [token, setToken] = useState(null)
 
-    const client_id = '5a39f461d53f4c47bd0408d875f5d668'
-    const redirect_uri = 'http://localhost:3000/dashboard'
-    const auth_endPoint = 'https://accounts.spotify.com/authorize'
-    const response_type = "token"
-
-    const spotifyCall = () =>{ 
-        
-        window.location=`${auth_endPoint}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}`
+    const spotifyCall = async () => {
+        window.location='http://localhost:8000/authenticate'
     }
+ 
+    useEffect(() => {
+        const hash = window.location.search
+        let code = cookies.Code
+        let error = ""
 
-    useEffect(()=>{
-        const hash = window.location.hash
-        let token = cookies.token
-
-        if(!token && hash){
-            token = hash.substring(1).split('&').find(elem => elem.startsWith("access_token")).split('=')[1]
-            setCookie("Token",token)
+        if(!error && hash){
+            error = hash.substring(1).split('?').find(elem => elem.startsWith("error"))?.split('=')[1]
+            if(error) return
         }
 
-        console.log(token)
+        if(!code && hash){
+            code = hash.substring(1).split('?').find(elem => elem.startsWith("code"))?.split('=')[1]
+        }
+        if(code) setCookie("Code",code)
 
-    },[])
+    }, []);
 
     const logout = () =>{
         removeCookie('UserId',cookies.userId)
         removeCookie('AuthToken',cookies.AuthToken)
+        removeCookie('Code',cookies.Code)
         window.location.reload()
     }
 
@@ -51,7 +50,7 @@ const ChatHeader = ({ user }) => {
                     </div>
 
                     <div className='relative mt-3 mr-3'>
-                        <button className='font-readex p-2 bg-green-500 text-green-100 rounded-full' onClick={spotifyCall}>Spotify</button>
+                        <button className='font-readex p-2 bg-green-500 text-green-100 rounded-full disabled:text-gray-500' onClick={spotifyCall} disabled={cookies.Code} >{cookies.Code?'Logged In':'Spotify'}</button>
                     </div>
                 </div>
                 

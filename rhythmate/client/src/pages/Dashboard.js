@@ -3,7 +3,6 @@ import TinderCard from 'react-tinder-card'
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import backgroundImage from '../images/bg-1.png'
 
 const Dashboard = () => {
 
@@ -12,8 +11,10 @@ const Dashboard = () => {
     const [genderedUser, setGenderedUser] = useState(null)
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
-    const spotify_token = cookies.Token
-    console.log(spotify_token)
+    const code = cookies.Code
+    
+    
+    // console.log(code)
 
     const getUser = async () => {
       try{
@@ -88,11 +89,15 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && genderedUser &&  <div className= "relative flex justify-between ">
+        {user && genderedUser && <div className= "relative flex justify-between ">
           <ChatContainer user={user}/>
-          <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
-            <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
 
+          {code && <div className = "w-screen flex  justify-center items-center"> Hi</div>
+          }
+          
+          {!code && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
+            <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
+              
               {filteredGenderedUsers.map((genderedUser) =>
               <TinderCard className='swipe' 
                 key={genderedUser.user_id} 
@@ -102,15 +107,15 @@ const Dashboard = () => {
                   <h3>{genderedUser.first_name}</h3>
                 </div>
               </TinderCard>  
-            )}
+              )}
   
             
-            <div className= "absolute text-center justify mt-[44%] ml-32 p-10"> {/*swiped-directionr*/} 
-                {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
+              <div className= "absolute text-center justify mt-[44%] ml-32 p-10"> {/*swiped-directionr*/} 
+                  {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
+              </div>
             </div>
+          </div>}
 
-            </div>
-          </div>
         </div>}
       </>  
       )
