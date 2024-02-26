@@ -3,7 +3,7 @@ const Chat = ({descendingOrderMessages}) => {
     return (
         
         <div className=' mt-40 p-5 h-60vh overflow-y-auto border-zinc-800'>
-            <div className="p-1 border bg-indigo-100 h-screen shadow">
+            <div className="p-1 border top-0 h-screen shadow">
                 {descendingOrderMessages.map((message, _index) => (
                     <div key={_index} className="p-3 flex">
                         <div className="chat-msg-header w-auto items-center flex flex-col ">
@@ -12,7 +12,7 @@ const Chat = ({descendingOrderMessages}) => {
                             </div>
                             {/* <p className="bg--200">{message.name}</p> */}
                         </div>
-                        <p className="border pt-2 p-2 rounded-lg ">{message.message}</p>
+                        <p className="ml-2 border pt-2 p-2 rounded-lg ">{message.message}</p>
                     </div>
                 ))} 
             </div>

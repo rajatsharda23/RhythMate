@@ -12,6 +12,8 @@ const Dashboard = () => {
     const [genderedUser, setGenderedUser] = useState(null)
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
+    const spotify_token = cookies.Token
+    console.log(spotify_token)
 
     const getUser = async () => {
       try{
