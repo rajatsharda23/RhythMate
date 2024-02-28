@@ -11,32 +11,35 @@ import axios from "axios";
 const ChatHeader = ({ user }) => {
 
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
-
-    const spotifyCall = async () => {
-        window.location='http://localhost:8000/authenticate'
-    }
  
     useEffect(() => {
-        const hash = window.location.search
-        let code = cookies.Code
-        let error = ""
-
-        if(!error && hash){
-            error = hash.substring(1).split('?').find(elem => elem.startsWith("error"))?.split('=')[1]
-            if(error) return
+        // Check if the access_token query param exists in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get("access_token");
+        const error = urlParams.get("error");
+    
+        if (accessToken) {
+          // Save the access token to localStorage
+          setCookie("AccessToken", accessToken);
+    
+          // Remove the access_token query param from the URL
+          urlParams.delete("access_token");
+          const newUrl = `${window.location.origin}${window.location.pathname}`;
+          window.history.replaceState({}, document.title, newUrl);
+          window.location.reload();
+        } else if (error) {
+          urlParams.delete("error");
+          alert("Error deteced, Spotify rejected");
+          const newUrl = `${window.location.origin}${window.location.pathname}`;
+          window.history.replaceState({}, document.title, newUrl);
+          window.location.reload();
         }
-
-        if(!code && hash){
-            code = hash.substring(1).split('?').find(elem => elem.startsWith("code"))?.split('=')[1]
-        }
-        if(code) setCookie("Code",code)
-
-    }, []);
+      }, []);
 
     const logout = () =>{
         removeCookie('UserId',cookies.userId)
         removeCookie('AuthToken',cookies.AuthToken)
-        removeCookie('Code',cookies.Code)
+        removeCookie('AccessToken',cookies.AccessToken)
         window.location.reload()
     }
 
@@ -50,7 +53,8 @@ const ChatHeader = ({ user }) => {
                     </div>
 
                     <div className='relative mt-3 mr-3'>
-                        <button className='font-readex p-2 bg-green-500 text-green-100 rounded-full disabled:text-gray-500' onClick={spotifyCall} disabled={cookies.Code} >{cookies.Code?'Logged In':'Spotify'}</button>
+                        {/* <button className='font-readex p-2 bg-green-500 text-green-100 rounded-full disabled:text-gray-500' onClick={spotifyCall} disabled={cookies.Code} >{cookies.Code?'Logged In':'Spotify'}</button> */}
+                        {!cookies.AccessToken && <a className="font-readex p-2 bg-green-500 text-green-100 rounded-full " href='http://localhost:8000/authenticate' >Spotify</a>}
                     </div>
                 </div>
                 

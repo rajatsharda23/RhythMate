@@ -11,9 +11,10 @@ const SpotifyWebApi = require('spotify-web-api-node')
 require('dotenv').config()
  
 const uri = process.env.URI 
-const client_id = '5a39f461d53f4c47bd0408d875f5d668'
-const client_secret = '26dcc340cc0342ddbdd99702a68963ba'
-const redirect_uri = 'http://localhost:3000/dashboard'
+const client_id = process.env.CLIENT_ID
+const client_secret = process.env.CLIENT_SECRET
+const client_app_url = process.env.CLIENT_APP_URL
+const redirect_uri = process.env.REDIRECT_URI
 
 const app = express()
 app.use(cors())
@@ -210,7 +211,7 @@ app.get('/users', async (req, res) => {
     } finally {
         await client.close()
     }
-})
+}) 
 
 app.get('/messages', async (req,res) => {
     const client = new MongoClient(uri)
@@ -248,12 +249,12 @@ app.post('/message', async (req, res) => {
         await client.close()
     }
 })
- 
+  
 const spotifyApi = new SpotifyWebApi({
     clientId: client_id,
     clientSecret: client_secret,
     redirectUri: redirect_uri
-})
+}) 
 
 app.get('/authenticate', async (req,res) => {
     const scopes = ['user-read-private', 'user-read-email']
@@ -261,38 +262,37 @@ app.get('/authenticate', async (req,res) => {
     // console.log('check')
 })
 
-app.get('/callback',(res,req)=>{
-    const error = req.query.error
-    const code = req.query.code
-    const state = req.query.state
+app.get('/callback', async (req, res) => {
+    const code = req.query.code;
+    // console.log('Hi')
+    try {
+        const data =  await spotifyApi.authorizationCodeGrant(code);
+        const accessToken = data.body['access_token'];
+        const refreshToken = data.body['refresh_token'];
+        const expiresIn = data.body['expires_in'];
 
-    if(error){
-        console.log('Error:',error)
-        res.send(`Error:${error}`)
-        return 
+        spotifyApi.setAccessToken(accessToken);
+        spotifyApi.setRefreshToken(refreshToken);
+
+        console.log(accessToken, refreshToken);
+        console.log('Success'); 
+
+        const refreshInterval = setInterval(async () => {
+            try {
+                const refreshedData = await spotifyApi.refreshAccessToken();
+                const refreshedAccessToken = refreshedData.body['access_token'];
+                spotifyApi.setAccessToken(refreshedAccessToken);
+                console.log('Access token refreshed successfully.');
+            } catch (error) {
+                console.error('Error refreshing access token:', error);
+                clearInterval(refreshInterval); // Stop the interval on error
+            }
+        }, expiresIn / 2 * 1000);
+
+        res.redirect(`${client_app_url}?access_token=${accessToken}`)
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error occurred');
     }
-
-    spotifyApi.authorizationCodeGrant(code).then(data=>{
-        const accessToken = data.body['access_token']
-        const refreshToken = data.body['refresh_token']
-        const expiresIn = data.body['expires_in']
-
-        spotifyApi.setAccessToken(accessToken)
-        spotifyApi.setRefreshToken(refreshToken)
-        
-        console.log(accessToken,refreshToken)
-        console.log('Success')
-
-        setInterval(async()=>{
-            const data = await spotifyApi.refreshAccessToken()
-            const accessTokenRefreshed = data.body['access_token']
-            spotifyApi.setAccessToken(accessTokenRefreshed)
-        },expiresIn/2*1000)
-    })
-})
-
-
-
-
-
-
+});

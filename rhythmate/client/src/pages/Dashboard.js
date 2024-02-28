@@ -1,4 +1,5 @@
 import ChatContainer from "../components/ChatContainer";
+import Wrapped from "../components/Wrapped";
 import TinderCard from 'react-tinder-card'
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
@@ -11,10 +12,10 @@ const Dashboard = () => {
     const [genderedUser, setGenderedUser] = useState(null)
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
-    const code = cookies.Code
+    const accessToken = cookies.AccessToken
     
     
-    // console.log(code)
+    // console.log(accessToken)
 
     const getUser = async () => {
       try{
@@ -92,10 +93,22 @@ const Dashboard = () => {
         {user && genderedUser && <div className= "relative flex justify-between ">
           <ChatContainer user={user}/>
 
-          {code && <div className = "w-screen flex  justify-center items-center"> Hi</div>
+          {accessToken && <div className = "w-screen flex">
+            <div className=" relative flex flex-row w-full h-[70%]"> 
+              <div className="bg-blue-200 w-full"> 
+                <Wrapped/>
+              </div>
+              
+              <div className="bg-pink-200 w-full">
+                <Wrapped />
+              </div>
+              
+            </div>
+          </div>
+
           }
           
-          {!code && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
+          {!accessToken && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
             <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
               
               {filteredGenderedUsers.map((genderedUser) =>
