@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { useCookies } from "react-cookie"
 import axios from "axios"
 
-const TopArtists = () => {
+const TopArtists = (user_Id) => {
+
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [topArtistsList, setTopArtistsList] = useState([])
     const userId = cookies.UserId
@@ -39,10 +40,19 @@ const TopArtists = () => {
         tracksToDB()
     },[])
 
-
-    return(
-        <div> 
-            TopArtist
+    // console.log(user_Id)
+    return (
+        <div>
+            {user_Id.userId.userId===userId &&
+                <div>
+                    hi
+                    {topArtistsList?.slice(0, 5).map((artist, index) => (
+                        <div key={index}>
+                            {artist.name}
+                        </div>
+                    ))}
+                </div>
+            }
         </div>
     )
 }

@@ -1,10 +1,12 @@
 import { useState } from "react"
+import { useCookies } from "react-cookie"
 import ChatHeader from "./ChatHeader"
 import ChatDisplay from "./ChatDisplay"
 import MatchDisplay from "./MatchDisplay"
 
 const ChatContainer = ({ user }) => {
 
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [clickedUser, setClickedUser] = useState(null)
 
     return (
@@ -13,7 +15,7 @@ const ChatContainer = ({ user }) => {
                 <div className="absolute w-full">
                     <ChatHeader user = {user}/>
                     <div className="flex flex-row justify-center items-center right-0 left-0 text-slate-800 bg-white"> 
-                        <button className=" mt-3 m-2 p-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/match" onClick={()=> setClickedUser(null)}>Matches</button>  
+                        <button className=" mt-3 m-2 p-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/match" onClick={()=> {setClickedUser(null); removeCookie("MatchedUserId", cookies.MatchedUserId)} }>Matches</button>  
                         <button  className=" mt-3 m-2 p-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 hover:from-red-400 hover:via-pink-300 hover:to-purple-400 peer/chat" disabled={!clickedUser}>Chats</button>  
                     </div>
                 </div>

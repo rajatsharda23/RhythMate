@@ -4,7 +4,7 @@ import axios from "axios"
 import TopArtists from "./TopArtists"
 import TopSongs from "./TopSongs"
 
-const Wrapped = () => {
+const Wrapped = (userId) => {
 
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [buttonChoice,setButtonChoice] = useState('Artists')
@@ -24,11 +24,11 @@ const Wrapped = () => {
                 <div className="flex flex-col h-[90%] bg-red-200">
                     
                     {buttonChoice==='Artists' && <div>
-                        <TopArtists />
+                        <TopArtists userId={userId}/>
                     </div>}
 
                     {buttonChoice==='Songs' && <div>
-                        <TopSongs />
+                        <TopSongs userId={cookies.MatchedUserId}/>
                     </div>}
 
                 </div>

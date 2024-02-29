@@ -42,7 +42,7 @@ const Dashboard = () => {
 
     useEffect(() => {
       getUser()
-
+      console.log(user)
   }, [])
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const Dashboard = () => {
       genderedUser => !matchedUserIds.includes(genderedUser.user_id)
     )
 
-    
+    console.log(genderedUser)
       return (
       <>
         {user && genderedUser && <div className= "relative flex justify-between ">
@@ -96,11 +96,11 @@ const Dashboard = () => {
           {accessToken && <div className = "w-screen flex">
             <div className=" relative flex flex-row w-full h-[70%]"> 
               <div className="bg-blue-200 w-full"> 
-                <Wrapped/> 
+                <Wrapped userId={userId}/> 
               </div>
               
               <div className="bg-pink-200 w-full">
-                <Wrapped />
+                <Wrapped userId={cookies.MatchedUserId}/>
               </div>
               
             </div>
