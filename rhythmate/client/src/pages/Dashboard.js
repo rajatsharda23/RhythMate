@@ -1,9 +1,9 @@
 import ChatContainer from "../components/ChatContainer";
+import Wrapped from "../components/Wrapped";
 import TinderCard from 'react-tinder-card'
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import backgroundImage from '../images/bg-1.png'
 
 const Dashboard = () => {
 
@@ -12,6 +12,10 @@ const Dashboard = () => {
     const [genderedUser, setGenderedUser] = useState(null)
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
+    const accessToken = cookies.AccessToken
+    
+    
+    // console.log(accessToken)
 
     const getUser = async () => {
       try{
@@ -86,11 +90,27 @@ const Dashboard = () => {
     
       return (
       <>
-        {user && genderedUser &&  <div className= "relative flex justify-between ">
+        {user && genderedUser && <div className= "relative flex justify-between ">
           <ChatContainer user={user}/>
-          <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
-            <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
 
+          {accessToken && <div className = "w-screen flex">
+            <div className=" relative flex flex-row w-full h-[70%]"> 
+              <div className="bg-blue-200 w-full"> 
+                <Wrapped/> 
+              </div>
+              
+              <div className="bg-pink-200 w-full">
+                <Wrapped />
+              </div>
+              
+            </div>
+          </div>
+
+          }
+          
+          {!accessToken && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
+            <div className = "mr-[40%] mb-[60%] inset-x-0 top-0">
+              
               {filteredGenderedUsers.map((genderedUser) =>
               <TinderCard className='swipe' 
                 key={genderedUser.user_id} 
@@ -100,15 +120,15 @@ const Dashboard = () => {
                   <h3>{genderedUser.first_name}</h3>
                 </div>
               </TinderCard>  
-            )}
+              )}
   
             
-            <div className= "absolute text-center justify mt-[44%] ml-32 p-10"> {/*swiped-directionr*/} 
-                {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
+              <div className= "absolute text-center justify mt-[44%] ml-32 p-10"> {/*swiped-directionr*/} 
+                  {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
+              </div>
             </div>
+          </div>}
 
-            </div>
-          </div>
         </div>}
       </>  
       )

@@ -5,13 +5,21 @@ const { v4 : uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const bcrypt = require('bcrypt')
-require('dotenv').config()
+const querystring = require('querystring');
+const SpotifyWebApi = require('spotify-web-api-node')
 
+require('dotenv').config()
+ 
 const uri = process.env.URI 
+const client_id = process.env.CLIENT_ID
+const client_secret = process.env.CLIENT_SECRET
+const client_app_url = process.env.CLIENT_APP_URL
+const redirect_uri = process.env.REDIRECT_URI
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
 
 app.get('/', (req,res) => {
     res.json('Hello to my App')
@@ -53,7 +61,6 @@ app.post('/signup', async (req,res) => {
     } catch(err) {
         console.log(err)
     }
-
 })
 
 
@@ -101,7 +108,6 @@ app.get('/gendered-users', async(req,res) => {
     }
 
 })
-
 
 app.put('/users', async (req,res)=>{
     const client = new MongoClient(uri)
@@ -179,7 +185,7 @@ app.put('/addmatch', async (req, res) => {
 
 app.get('/users', async (req, res) => {
     const client = new MongoClient(uri)
-    const userIds = JSON.parse(req.query.userIds)
+    const userIds = JSON.parse(req.query.userIds) 
     
     
     try {
@@ -204,7 +210,7 @@ app.get('/users', async (req, res) => {
     } finally {
         await client.close()
     }
-})
+}) 
 
 app.get('/messages', async (req,res) => {
     const client = new MongoClient(uri)
@@ -241,12 +247,102 @@ app.post('/message', async (req, res) => {
     } finally {
         await client.close()
     }
-
-    
 })
 
+//------------------------------------------SPOTIFY------------------------------------------
+  
+const spotifyApi = new SpotifyWebApi({ 
+    clientId: client_id,
+    clientSecret: client_secret,
+    redirectUri: redirect_uri
+}) 
 
+app.get('/authenticate', async (req,res) => {
+    const scopes = ['user-read-private', 'user-read-email','user-top-read']
+    res.redirect(spotifyApi.createAuthorizeURL(scopes)) 
+    // console.log('check')
+})
 
+app.get('/callback', async (req, res) => {
+    const code = req.query.code;
+    // console.log('Hi')
+    try {
+        const data =  await spotifyApi.authorizationCodeGrant(code);
+        const accessToken = data.body['access_token'];
+        const refreshToken = data.body['refresh_token'];
+        const expiresIn = data.body['expires_in'];
 
+        spotifyApi.setAccessToken(accessToken);
+        spotifyApi.setRefreshToken(refreshToken);
 
+        console.log(accessToken, refreshToken);
+        console.log('Success'); 
 
+        const refreshInterval = setInterval(async () => {
+            try {
+                const refreshedData = await spotifyApi.refreshAccessToken();
+                const refreshedAccessToken = refreshedData.body['access_token'];
+                spotifyApi.setAccessToken(refreshedAccessToken);
+                console.log('Access token refreshed successfully.');
+            } catch (error) {
+                console.error('Error refreshing access token:', error);
+                clearInterval(refreshInterval); 
+            }
+        }, expiresIn / 2 * 1000);
+
+        res.redirect(`${client_app_url}?access_token=${accessToken}`)
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error occurred');
+    }
+}) 
+
+app.get('/tracks', async(req, res) => {
+    const accessToken = req.query.accessToken; 
+    if (!accessToken) {
+        return res.status(400).json({ error: 'Access token is missing' });
+    }
+
+    spotifyApi.setAccessToken(accessToken);
+    try {
+        const data = await spotifyApi.getMyTopArtists()
+        let topArtists = data.body.items;
+        // console.log(topArtists);
+        res.json(topArtists); // 
+    } catch (err) {
+        console.log('Something went wrong!', err);
+        res.status(500).json({ error: 'Kuch Gadbad ho gya re baba' });
+    }
+})
+
+app.post('/top-tracks', async (req,res) => {
+    const client = new MongoClient(uri) 
+    const { userId, TopArtistList } = req.body;
+    // console.log(userId)
+    // console.log(TopArtistList)
+    try{
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const collection = database.collection('spotify_top_artists')
+        const existingTracks = await collection.findOne({ user_id: userId });
+        
+        const data = {
+            user_id : userId,
+            artist_name: TopArtistList.slice(0, 5).map(artist => artist.name),
+            artist_images: TopArtistList.slice(0, 5).map(artist => artist.images[0]?.url),
+            artist_urls: TopArtistList.slice(0, 5).map(artist => artist.external_urls.spotify)
+        }
+        
+        if(existingTracks){
+            await collection.updateOne({ user_id: userId }, { $set: data });
+        } else{
+            await collection.insertOne(data)
+        }
+        console.log('1')
+        res.status(201)
+
+    } catch(err) {
+        console.log(err)
+    } 
+})
