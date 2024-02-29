@@ -96,7 +96,7 @@ const Dashboard = () => {
           {accessToken && <div className = "w-screen flex">
             <div className=" relative flex flex-row w-full h-[70%]"> 
               <div className="bg-blue-200 w-full"> 
-                <Wrapped/>
+                <Wrapped/> 
               </div>
               
               <div className="bg-pink-200 w-full">

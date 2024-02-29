@@ -26,8 +26,8 @@ const AuthModal = ({setShowModal, isSignup}) => {
             setLowerEmail(email.toLowerCase())
             // console.log(email, '->', lowerEmail)
             const response = await axios.post(`http://localhost:8000/${isSignup? 'signup' : 'login'}`, {email, password})
-            console.log(response.data)
-            console.log('hi')
+            // console.log(response.data)
+            // console.log('hi')
             setCookie('AuthToken', response.data.token)
             setCookie('UserId', response.data.user_id)
 

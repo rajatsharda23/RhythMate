@@ -61,7 +61,6 @@ app.post('/signup', async (req,res) => {
     } catch(err) {
         console.log(err)
     }
-
 })
 
 
@@ -249,15 +248,17 @@ app.post('/message', async (req, res) => {
         await client.close()
     }
 })
+
+//------------------------------------------SPOTIFY------------------------------------------
   
-const spotifyApi = new SpotifyWebApi({
+const spotifyApi = new SpotifyWebApi({ 
     clientId: client_id,
     clientSecret: client_secret,
     redirectUri: redirect_uri
 }) 
 
 app.get('/authenticate', async (req,res) => {
-    const scopes = ['user-read-private', 'user-read-email']
+    const scopes = ['user-read-private', 'user-read-email','user-top-read']
     res.redirect(spotifyApi.createAuthorizeURL(scopes)) 
     // console.log('check')
 })
@@ -285,7 +286,7 @@ app.get('/callback', async (req, res) => {
                 console.log('Access token refreshed successfully.');
             } catch (error) {
                 console.error('Error refreshing access token:', error);
-                clearInterval(refreshInterval); // Stop the interval on error
+                clearInterval(refreshInterval); 
             }
         }, expiresIn / 2 * 1000);
 
@@ -295,4 +296,53 @@ app.get('/callback', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('Error occurred');
     }
-});
+}) 
+
+app.get('/tracks', async(req, res) => {
+    const accessToken = req.query.accessToken; 
+    if (!accessToken) {
+        return res.status(400).json({ error: 'Access token is missing' });
+    }
+
+    spotifyApi.setAccessToken(accessToken);
+    try {
+        const data = await spotifyApi.getMyTopArtists()
+        let topArtists = data.body.items;
+        // console.log(topArtists);
+        res.json(topArtists); // 
+    } catch (err) {
+        console.log('Something went wrong!', err);
+        res.status(500).json({ error: 'Kuch Gadbad ho gya re baba' });
+    }
+})
+
+app.post('/top-tracks', async (req,res) => {
+    const client = new MongoClient(uri) 
+    const { userId, TopArtistList } = req.body;
+    // console.log(userId)
+    // console.log(TopArtistList)
+    try{
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const collection = database.collection('spotify_top_artists')
+        const existingTracks = await collection.findOne({ user_id: userId });
+        
+        const data = {
+            user_id : userId,
+            artist_name: TopArtistList.slice(0, 5).map(artist => artist.name),
+            artist_images: TopArtistList.slice(0, 5).map(artist => artist.images[0]?.url),
+            artist_urls: TopArtistList.slice(0, 5).map(artist => artist.external_urls.spotify)
+        }
+        
+        if(existingTracks){
+            await collection.updateOne({ user_id: userId }, { $set: data });
+        } else{
+            await collection.insertOne(data)
+        }
+        console.log('1')
+        res.status(201)
+
+    } catch(err) {
+        console.log(err)
+    } 
+})
