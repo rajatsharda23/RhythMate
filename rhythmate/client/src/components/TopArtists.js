@@ -18,9 +18,9 @@ const TopArtists = (user_id) => {
  
 
     const getTracks = async () => {
-        // console.log('<>',user_id.user_id.userId)
+        
         try{
-            const response = await axios.get('http://localhost:8000/get-tracks', {
+            const response = await axios.get('http://localhost:8000/get-artists', {
                 params: {
                     user_id: user_id.user_id.userId
                 }

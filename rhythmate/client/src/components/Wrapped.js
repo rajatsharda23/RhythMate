@@ -9,11 +9,12 @@ const Wrapped = (user_id) => {
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [buttonChoice,setButtonChoice] = useState('Artists')
     const [topArtistsList, setTopArtistsList] = useState([])
+    const [topSongsList, setTopSongsList] = useState([])
     const accessToken = cookies.AccessToken
 
     const topArtists = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/tracks', {
+            const response = await axios.get('http://localhost:8000/artists', {
                 params: { accessToken: cookies.AccessToken }
             })
             setTopArtistsList(response.data.slice(0, 5) )
@@ -23,10 +24,10 @@ const Wrapped = (user_id) => {
         }
     }
 
-    const tracksToDB = async () => {
+    const artistsToDB = async () => {
         // console.log('Hello: ', topArtistsList)
         try{
-            const response = await axios.post('http://localhost:8000/top-tracks', {
+            const response = await axios.post('http://localhost:8000/top-artists', {
                 user_id: user_id.userId, 
                 TopArtistList: topArtistsList
             })
@@ -37,19 +38,60 @@ const Wrapped = (user_id) => {
         }
     }
 
-    // console.log(topArtistsList)
-
-    useEffect(()=>{
-        console.log("user id: ", user_id.userId)
-        if(user_id.userId===cookies.UserId){
-            topArtists();
-            tracksToDB()
+    useEffect(() => {
+        if (user_id.userId === cookies.UserId) {
+            const fetchData = async () => {
+                await topArtists()
+                artistsToDB()
+            }
+            fetchData()
         }
-    },[])
+    }, [])
  
     useEffect(() => {
-        console.log(buttonChoice);
-    }, [buttonChoice]);
+        console.log(buttonChoice)
+    }, [buttonChoice])
+
+
+    const topSongs = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/songs', {
+                params: { accessToken: cookies.AccessToken }
+            })
+            // console.log(response.data)
+            setTopSongsList(response.data.slice(0, 5))
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const songsToDB = async () => {
+    
+        try{
+            const response = await axios.post('http://localhost:8000/top-songs', {
+                user_id: user_id.userId, 
+                TopSongsList: topSongsList
+            })
+            console.log(response)
+            console.log('SuccessFully added tracks !')
+        } catch(err){
+            console.log('Error: ', err)
+        }
+    }
+
+    useEffect(() => {
+        if (user_id.userId === cookies.UserId) {
+            const fetchData = async () => {
+                await topSongs()
+                songsToDB()
+            }
+            fetchData()
+        }
+    }, [])
+
+    // useEffect(()=>{
+    //     console.log('hi: ', topSongsList)
+    // },[])
 
     return(
         <div className="flex flex-col items-center h-full"> 
@@ -66,7 +108,7 @@ const Wrapped = (user_id) => {
                     </div>}
 
                     {buttonChoice==='Songs' && <div>
-                        <TopSongs user_id={cookies.MatchedUserId}/>
+                        <TopSongs {...user_id}/>
                     </div>}
 
                 </div>
