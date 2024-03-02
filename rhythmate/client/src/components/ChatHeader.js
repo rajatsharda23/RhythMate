@@ -40,6 +40,7 @@ const ChatHeader = ({ user }) => {
         removeCookie('UserId',cookies.userId)
         removeCookie('AuthToken',cookies.AuthToken)
         removeCookie('AccessToken',cookies.AccessToken)
+        removeCookie("MatchedUserId", cookies.MatchedUserId)
         window.location.reload()
     }
 

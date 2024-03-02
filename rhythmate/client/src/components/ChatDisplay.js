@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useCookies } from "react-cookie"
 import Chat from "./Chat"
 import ChatInput from "./ChatInput"
 import axios from "axios"
@@ -6,9 +7,12 @@ import axios from "axios"
 const ChatDisplay = ({user, clickedUser}) => {
     const [usersMessages, setUsersMessages] = useState(null)
     const [clickedUsersMessages, setClickedUsersMessages] = useState(null)
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
     const userId = user?.user_id
     const clickedUserId = clickedUser?.user_id
+    
+    setCookie("MatchedUserId", clickedUser?.user_id)
 
     const getUsersMessages = async () => {
         try {

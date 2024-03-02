@@ -7,13 +7,14 @@ import axios from "axios";
 
 const Dashboard = () => {
 
+    const [renderCount, setRenderCount] = useState()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [user, setUser] = useState(null)
     const [genderedUser, setGenderedUser] = useState(null)
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
     const accessToken = cookies.AccessToken
-    
+    const matchedUserId = cookies.MatchedUserId
     
     // console.log(accessToken)
 
@@ -42,16 +43,19 @@ const Dashboard = () => {
 
     useEffect(() => {
       getUser()
+      // console.log('Matched User Id: ', matchedUserId)
+    }, [])
 
-  }, [])
+    useEffect(()=>{
+      console.log(renderCount);
+    },[renderCount])
 
-  useEffect(() => {
+    useEffect(() => {
       if (user) {
           getGenderedUser()
       }
-  }, [user])
-
-    
+    }, [user])
+      
     // console.log('gendered-user ->', genderedUser)
 
     const updateMatches = async (matchedUserId) => {
@@ -91,21 +95,20 @@ const Dashboard = () => {
       return (
       <>
         {user && genderedUser && <div className= "relative flex justify-between ">
-          <ChatContainer user={user}/>
+          <ChatContainer user={user} renderCount={renderCount}/>
 
           {accessToken && <div className = "w-screen flex">
             <div className=" relative flex flex-row w-full h-[70%]"> 
               <div className="bg-blue-200 w-full"> 
-                <Wrapped/> 
+                <Wrapped userId={userId}/> 
               </div>
               
-              <div className="bg-pink-200 w-full">
-                <Wrapped />
-              </div>
+              {matchedUserId && <div className="bg-pink-200 w-full">
+                <Wrapped userId={matchedUserId}/>
+              </div>}
               
             </div>
           </div>
-
           }
           
           {!accessToken && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 
