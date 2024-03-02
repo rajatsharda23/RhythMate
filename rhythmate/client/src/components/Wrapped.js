@@ -54,12 +54,12 @@ const Wrapped = (user_id) => {
     return(
         <div className="flex flex-col items-center h-full"> 
             <h1 className=" mt-3 top-0 p-2 font-readex text-xl">Spotify Stats</h1>
-            <div className="m-5 p-5  h-[80%] w-[65%] bg-green-100 shadow shadow-green-500 border-green-200 border rounded-lg">
+            <div className="m-5 p-5  h-[80%] w-[65%] bg-green-200 shadow shadow-green-500 border-green-200 border rounded-lg">
                 <div className="flex justify-center">
                     <button className="p-2" onClick={()=>setButtonChoice('Artists')}>Artists</button>
                     <button className="p-2" onClick={()=>setButtonChoice('Songs')}>Songs</button>
                 </div>
-                <div className="flex flex-col h-[90%] bg-red-200">
+                <div className="flex flex-col h-[90%] bg-green-100 rounded-lg border border-green-300">
                     
                     {buttonChoice==='Artists' && <div>
                         <TopArtists user_id={user_id}/>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useCookies } from "react-cookie"
 import axios from "axios"
+import ArtistDisplay from "./ArtistDisplay"
 
 const TopArtists = (user_id) => {
 
@@ -41,7 +42,7 @@ const TopArtists = (user_id) => {
 
     useEffect(() => {
         getTracks();
-    }, []); // This useEffect runs once when the component mounts to fetch tracks
+    }, []); 
     
     // useEffect(() => {
     //     console.log('FROM DB: ',topArtist);
@@ -51,7 +52,7 @@ const TopArtists = (user_id) => {
         <div>
             {user_id.user_id.userId===userId && 
                 <div>
-                    hi
+                    <ArtistDisplay {...topArtist}/>
                     {/* {topTracks?.slice(0, 5).map((artist, index) => (
                         <div key={index}>
                             {artist.name}
@@ -60,9 +61,11 @@ const TopArtists = (user_id) => {
                 </div>
             }
 
+            
             {user_id.user_id.userId===matchedUserId && 
                 <div>
                     hello
+                    {/* <ArtistDisplay {...topArtist}/> */}
                     {/* {topTracks?.slice(0, 5).map((artist, index) => (
                         <div key={index}>
                             {artist.name}
