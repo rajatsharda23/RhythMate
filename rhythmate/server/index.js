@@ -348,3 +348,24 @@ app.post('/top-tracks', async (req,res) => {
         console.log(err)
     } 
 }) 
+
+app.get('/get-tracks', async (req, res) => {
+    const client = new MongoClient(uri)
+    const user_id = req.query.user_id
+    console.log(user_id)
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const collection = database.collection('spotify_top_artists')
+
+        const query = {user_id: user_id}
+        const topTracks = await collection.findOne(query)
+        res.send(topTracks)
+        console.log(topTracks) 
+    } catch(err){
+        console.log('Error-> ', err)
+    } 
+    finally {
+        await client.close()
+    }
+})

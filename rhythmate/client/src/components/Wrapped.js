@@ -24,7 +24,7 @@ const Wrapped = (user_id) => {
     }
 
     const tracksToDB = async () => {
-        console.log('Hello: ', topArtistsList)
+        // console.log('Hello: ', topArtistsList)
         try{
             const response = await axios.post('http://localhost:8000/top-tracks', {
                 user_id: user_id.userId, 

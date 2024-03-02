@@ -7,6 +7,7 @@ import axios from "axios";
 
 const Dashboard = () => {
 
+    const [renderCount, setRenderCount] = useState()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [user, setUser] = useState(null)
     const [genderedUser, setGenderedUser] = useState(null)
@@ -42,8 +43,12 @@ const Dashboard = () => {
 
     useEffect(() => {
       getUser()
-      console.log('Matched User Id: ', matchedUserId)
+      // console.log('Matched User Id: ', matchedUserId)
     }, [])
+
+    useEffect(()=>{
+      console.log(renderCount);
+    },[renderCount])
 
     useEffect(() => {
       if (user) {
@@ -90,7 +95,7 @@ const Dashboard = () => {
       return (
       <>
         {user && genderedUser && <div className= "relative flex justify-between ">
-          <ChatContainer user={user}/>
+          <ChatContainer user={user} renderCount={renderCount}/>
 
           {accessToken && <div className = "w-screen flex">
             <div className=" relative flex flex-row w-full h-[70%]"> 

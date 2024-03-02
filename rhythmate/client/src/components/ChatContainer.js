@@ -4,19 +4,18 @@ import ChatHeader from "./ChatHeader"
 import ChatDisplay from "./ChatDisplay"
 import MatchDisplay from "./MatchDisplay"
 
-const ChatContainer = ({ user }) => {
+const ChatContainer = ({ user, renderCount }) => {
 
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [clickedUser, setClickedUser] = useState(null)
-    const [renderCount, setRenderCount] = useState(0);
+
 
     const handleButtonClick = () => {
         setClickedUser(null);
         removeCookie("MatchedUserId", cookies.MatchedUserId);
         // Update the render count to trigger a UI update
-        setRenderCount(renderCount + 1);
     }
-    
+
     return (
         <div className="relative w-[40%] bg-white">
             <div className="overflow-y-auto bg-white shadow shadow-gray-600 h-screen text-left z-1 diabled:border-gray-500"> 
