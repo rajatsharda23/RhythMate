@@ -13,7 +13,7 @@ const Dashboard = () => {
     const [lastDirection, setLastDirection] = useState()
     const userId = cookies.UserId    
     const accessToken = cookies.AccessToken
-    
+    const matchedUserId = cookies.MatchedUserId
     
     // console.log(accessToken)
 
@@ -42,16 +42,15 @@ const Dashboard = () => {
 
     useEffect(() => {
       getUser()
-      console.log(user)
-  }, [])
+      console.log('Matched User Id: ', matchedUserId)
+    }, [])
 
-  useEffect(() => {
+    useEffect(() => {
       if (user) {
           getGenderedUser()
       }
-  }, [user])
-
-    
+    }, [user])
+      
     // console.log('gendered-user ->', genderedUser)
 
     const updateMatches = async (matchedUserId) => {
@@ -87,7 +86,7 @@ const Dashboard = () => {
       genderedUser => !matchedUserIds.includes(genderedUser.user_id)
     )
 
-    console.log(genderedUser)
+    
       return (
       <>
         {user && genderedUser && <div className= "relative flex justify-between ">
@@ -99,13 +98,12 @@ const Dashboard = () => {
                 <Wrapped userId={userId}/> 
               </div>
               
-              <div className="bg-pink-200 w-full">
-                <Wrapped userId={cookies.MatchedUserId}/>
-              </div>
+              {matchedUserId && <div className="bg-pink-200 w-full">
+                <Wrapped userId={matchedUserId}/>
+              </div>}
               
             </div>
           </div>
-
           }
           
           {!accessToken && <div className = "w-screen flex  justify-center items-center"> {/*swiper*/} 

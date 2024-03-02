@@ -275,8 +275,8 @@ app.get('/callback', async (req, res) => {
         spotifyApi.setAccessToken(accessToken);
         spotifyApi.setRefreshToken(refreshToken);
 
-        console.log(accessToken, refreshToken);
-        console.log('Success'); 
+        // console.log(accessToken, refreshToken);
+        // console.log('Success'); 
 
         const refreshInterval = setInterval(async () => {
             try {
@@ -318,31 +318,33 @@ app.get('/tracks', async(req, res) => {
 
 app.post('/top-tracks', async (req,res) => {
     const client = new MongoClient(uri) 
-    const { userId, TopArtistList } = req.body;
-    // console.log(userId)
+    const { user_id, TopArtistList } = req.body;
+    // console.log(user_id) 
     // console.log(TopArtistList)
     try{
         await client.connect()
         const database = client.db('RhythMatch')
         const collection = database.collection('spotify_top_artists')
-        const existingTracks = await collection.findOne({ user_id: userId });
-        
+        const existingTracks = await collection.findOne({ user_id: user_id });
+        console.log('topArtistList', TopArtistList)
         const data = {
-            user_id : userId,
+            user_id : user_id,
             artist_name: TopArtistList.slice(0, 5).map(artist => artist.name),
             artist_images: TopArtistList.slice(0, 5).map(artist => artist.images[0]?.url),
             artist_urls: TopArtistList.slice(0, 5).map(artist => artist.external_urls.spotify)
         }
-        
+        console.log('ExistingTracks: ', existingTracks)
+        console.log('data: ', data)
         if(existingTracks){
-            await collection.updateOne({ user_id: userId }, { $set: data });
+            if(!data.artist_name.length) res.send('Access Tokern Exipred')
+            else await collection.updateOne({ user_id: user_id}, { $set: data });
         } else{
             await collection.insertOne(data)
         }
-        console.log('1')
+        // console.log('1')
         res.status(201)
 
     } catch(err) {
         console.log(err)
     } 
-})
+}) 
