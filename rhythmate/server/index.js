@@ -267,7 +267,7 @@ app.get('/callback', async (req, res) => {
     const code = req.query.code;
     // console.log('Hi')
     try {
-        const data =  await spotifyApi.authorizationCodeGrant(code);
+        const data = await spotifyApi.authorizationCodeGrant(code);
         const accessToken = data.body['access_token'];
         const refreshToken = data.body['refresh_token'];
         const expiresIn = data.body['expires_in'];
@@ -275,8 +275,8 @@ app.get('/callback', async (req, res) => {
         spotifyApi.setAccessToken(accessToken);
         spotifyApi.setRefreshToken(refreshToken);
 
-        // console.log(accessToken, refreshToken);
-        // console.log('Success'); 
+        console.log(accessToken, refreshToken);
+        console.log('Success'); 
 
         const refreshInterval = setInterval(async () => {
             try {
@@ -288,7 +288,7 @@ app.get('/callback', async (req, res) => {
                 console.error('Error refreshing access token:', error);
                 clearInterval(refreshInterval); 
             }
-        }, expiresIn / 2 * 1000);
+        }, expiresIn / 4 * 1000);
 
         res.redirect(`${client_app_url}?access_token=${accessToken}`)
 
@@ -418,7 +418,28 @@ app.post('/top-songs', async (req,res) => {
         // console.log('1')
         res.status(201)
 
-    } catch(err) {
+    } catch(err) { 
         console.log(err)
     } 
 }) 
+
+app.get('/get-songs', async (req, res) => {
+    const client = new MongoClient(uri)
+    const user_id = req.query.user_id
+    console.log(user_id)
+    try {
+        await client.connect()
+        const database = client.db('RhythMatch')
+        const collection = database.collection('spotify_top_tracks')
+
+        const query = {user_id: user_id}
+        const topTracks = await collection.findOne(query)
+        res.send(topTracks)
+        // console.log(topTracks) 
+    } catch(err){
+        console.log('Error-> ', err)
+    } 
+    finally {
+        await client.close()
+    }
+})

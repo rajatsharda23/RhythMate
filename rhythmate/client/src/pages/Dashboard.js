@@ -46,9 +46,9 @@ const Dashboard = () => {
       // console.log('Matched User Id: ', matchedUserId)
     }, [])
 
-    useEffect(()=>{
-      console.log(renderCount);
-    },[renderCount])
+    // useEffect(()=>{
+    //   console.log(renderCount);
+    // },[renderCount])
 
     useEffect(() => {
       if (user) {
@@ -98,9 +98,9 @@ const Dashboard = () => {
           <ChatContainer user={user} renderCount={renderCount}/>
 
           {accessToken && <div className = "w-screen flex">
-            <div className=" relative flex flex-row w-full h-[70%]"> 
+            <div className=" relative flex flex-row w-full h-full"> 
               <div className="bg-blue-200 w-full"> 
-                <Wrapped userId={userId}/> 
+                <Wrapped userId={userId}/>
               </div>
               
               {matchedUserId && <div className="bg-pink-200 w-full">
