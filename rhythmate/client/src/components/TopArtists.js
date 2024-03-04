@@ -5,12 +5,15 @@ import ArtistDisplay from "./ArtistDisplay"
 
 const TopArtists = (user_id) => {
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const [isLoading, setIsLoading] = useState(true)
     const [topArtist, setTopArtist] = useState({
         user_id: user_id.user_id.userId,
-        artist_name: [],
-        artist_images: [],
-        artist_url: []
+        artist_name: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection'],
+        artist_images: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection'],
+        artist_url: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection']
     })
 
     const userId = cookies.UserId
@@ -18,9 +21,9 @@ const TopArtists = (user_id) => {
  
 
     const getTracks = async () => {
-        // console.log('<>',user_id.user_id.userId)
+    
         try{
-            const response = await axios.get('http://localhost:8000/get-tracks', {
+            const response = await axios.get(`${BASE_API_ADD}/get-artists`, {
                 params: {
                     user_id: user_id.user_id.userId
                 }
@@ -33,22 +36,24 @@ const TopArtists = (user_id) => {
                 artist_images: data.artist_images,
                 artist_urls: data.artist_urls
             }))
-            
-            
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            setIsLoading(false)
         } catch(err){
-            console.log('Error: ', err)
+            setIsLoading(false)
+            console.log('Error:  ', err)
         }
     }
 
     useEffect(() => {
-        getTracks();
-    }, []); 
+        getTracks()
+    }, [])
     
     // useEffect(() => {
     //     console.log('FROM DB: ',topArtist);
     // }, [topArtist]);
     
     return (
+        isLoading? <div>Loading...</div>:
         <div>
             {user_id.user_id.userId===userId && 
                 <div>
@@ -64,8 +69,7 @@ const TopArtists = (user_id) => {
             
             {user_id.user_id.userId===matchedUserId && 
                 <div>
-                    hello
-                    {/* <ArtistDisplay {...topArtist}/> */}
+                    <ArtistDisplay {...topArtist}/>
                     {/* {topTracks?.slice(0, 5).map((artist, index) => (
                         <div key={index}>
                             {artist.name}

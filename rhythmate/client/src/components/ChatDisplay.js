@@ -5,6 +5,9 @@ import ChatInput from "./ChatInput"
 import axios from "axios"
 
 const ChatDisplay = ({user, clickedUser}) => {
+
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [usersMessages, setUsersMessages] = useState(null)
     const [clickedUsersMessages, setClickedUsersMessages] = useState(null)
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
@@ -16,7 +19,7 @@ const ChatDisplay = ({user, clickedUser}) => {
 
     const getUsersMessages = async () => {
         try {
-               const response = await axios.get('http://localhost:8000/messages', {
+               const response = await axios.get(`${BASE_API_ADD}/messages`, {
                    params: { userId: userId, correspondingUserId: clickedUserId}
                })
             setUsersMessages(response.data)
@@ -27,7 +30,7 @@ const ChatDisplay = ({user, clickedUser}) => {
    
        const getClickedUsersMessages = async () => {
            try {
-               const response = await axios.get('http://localhost:8000/messages', {
+               const response = await axios.get(`${BASE_API_ADD}/messages`, {
                    params: { userId: clickedUserId , correspondingUserId: userId}
                })
                setClickedUsersMessages(response.data)

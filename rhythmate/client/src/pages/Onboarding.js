@@ -8,6 +8,8 @@ const Onboarding = () => {
   let navigate = useNavigate()
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
+  const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
   const [formData, setFormData] = useState({
     user_id : cookies.UserId,
     first_name : '',
@@ -37,7 +39,7 @@ const Onboarding = () => {
     e.preventDefault()
 
     try{
-      const response = await axios.put('http://localhost:8000/users', { formData })
+      const response = await axios.put(`${BASE_API_ADD}/users`, { formData })
       const success = response.status===200
       console.log(response.status)
       console.log(success)
@@ -53,7 +55,7 @@ const Onboarding = () => {
   console.log(formData)
     return (
 
-      <div className= "relative h-full w-screen bg-cover font-readex bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-300">
+      <div className= "relative h-full w-screen bg-cover font-readex bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
          <Nav minimal={true} 
          setShowModal={() => {}} 
          showModal={false} 
@@ -203,7 +205,7 @@ const Onboarding = () => {
 
             <section className= 'flex flex-col mt-10' >
               <label htmlFor='profile' className='text-xl'>Profile Photo</label>
-              <input className="border rounded m-2 bg-indigo-100"
+              <input className="border rounded m-2 p-1 bg-indigo-100"
                 id = 'url'
                 name = 'url'
                 type = 'url'

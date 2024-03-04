@@ -6,11 +6,13 @@ const MatchDisplay = ({ matches, setClickedUser }) => {
     const [cookies, setCookie, removeCookie] = useCookies(null);
     const [matchedProfiles, setMatchedProfiles] = useState(null)
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const userId = cookies.UserId;
     const matchedUserIds = matches.map(( {user_id} ) => user_id)
     const getMatches = async () => {
         try{
-            const resposne = await axios.get('http://localhost:8000/users', {
+            const resposne = await axios.get(`${BASE_API_ADD}/users`, {
                 params: {userIds : JSON.stringify(matchedUserIds)}
             })
             setMatchedProfiles(resposne.data)
