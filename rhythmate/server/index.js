@@ -1,4 +1,4 @@
-const PORT = 8000
+const PORT = 8000 || process.env.PORT
 const {MongoClient} = require('mongodb')
 const express = require('express')
 const { v4 : uuidv4 } = require('uuid')
@@ -9,7 +9,7 @@ const querystring = require('querystring');
 const SpotifyWebApi = require('spotify-web-api-node')
 
 require('dotenv').config()
- 
+
 const uri = process.env.URI 
 const client_id = process.env.CLIENT_ID
 const client_secret = process.env.CLIENT_SECRET
