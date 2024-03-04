@@ -5,6 +5,8 @@ import ArtistDisplay from "./ArtistDisplay"
 
 const TopArtists = (user_id) => {
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [isLoading, setIsLoading] = useState(true)
     const [topArtist, setTopArtist] = useState({
@@ -21,7 +23,7 @@ const TopArtists = (user_id) => {
     const getTracks = async () => {
     
         try{
-            const response = await axios.get('http://localhost:8000/get-artists', {
+            const response = await axios.get(`${BASE_API_ADD}/get-artists`, {
                 params: {
                     user_id: user_id.user_id.userId
                 }

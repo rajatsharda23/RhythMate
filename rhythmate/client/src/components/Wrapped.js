@@ -7,6 +7,8 @@ import TopSongs from "./TopSongs"
 const Wrapped = (user_id) => {
     // console.log('mewTOOOTO',user_id)
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [buttonChoice,setButtonChoice] = useState('Artists')
     const [topArtistsList, setTopArtistsList] = useState([])
@@ -17,7 +19,7 @@ const Wrapped = (user_id) => {
     const topArtists = async () => {
         setIsLoading(true)
         try {
-            const response = await axios.get('http://localhost:8000/artists', {
+            const response = await axios.get(`${BASE_API_ADD}/artists`, {
                 params: { accessToken: cookies.AccessToken }
             })
             console.log('getting info->', response.data.slice(0, 5))
@@ -36,7 +38,7 @@ const Wrapped = (user_id) => {
         console.log('Hello',topArtistsList)
         setIsLoading(true)
         try{
-            const response = await axios.post('http://localhost:8000/top-artists', {
+            const response = await axios.post(`${BASE_API_ADD}/top-artists`, {
                 user_id: user_id.userId, 
                 TopArtistList: topArtistsList
             })
@@ -53,7 +55,7 @@ const Wrapped = (user_id) => {
     const topSongs = async () => {
         setIsLoading(true)
         try {
-            const response = await axios.get('http://localhost:8000/songs', {
+            const response = await axios.get(`${BASE_API_ADD}/songs`, {
                 params: { accessToken: cookies.AccessToken }
             })
             // console.log(response.data)
@@ -70,7 +72,7 @@ const Wrapped = (user_id) => {
         // console.log(setTimeout('Timerrrr',5000))
         setIsLoading(true)
         try{
-            const response = await axios.post('http://localhost:8000/top-songs', {
+            const response = await axios.post(`${BASE_API_ADD}/top-songs`, {
                 user_id: user_id.userId, 
                 TopSongsList: topSongsList
             })
@@ -112,24 +114,10 @@ const Wrapped = (user_id) => {
 
     const handleClickArtist =  () =>{
         setButtonChoice('Artists')
-        // if (user_id.userId === cookies.UserId) {
-        //     const fetchData = async () => {
-        //          topArtists()
-        //         artistsToDB()
-        //     }
-        //     fetchData()
-        // }
     }
 
     const handleClickSong =  () =>{
         setButtonChoice('Songs')
-        // if (user_id.userId === cookies.UserId) {
-        //     const fetchData = async () => {
-        //          topSongs()
-        //         songsToDB()
-        //     }
-        //     fetchData()
-        // }
     }
 
     return( isLoading?<div>LOADING...</div>:

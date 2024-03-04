@@ -7,6 +7,8 @@ import axios from "axios";
 
 const Dashboard = () => {
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [renderCount, setRenderCount] = useState()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [user, setUser] = useState(null)
@@ -20,7 +22,7 @@ const Dashboard = () => {
 
     const getUser = async () => {
       try{
-          const response = await axios.get('http://localhost:8000/user', {
+          const response = await axios.get(`${BASE_API_ADD}/user`, {
           params: {userId}
         })
         setUser(response.data)
@@ -32,7 +34,7 @@ const Dashboard = () => {
     const getGenderedUser = async () => {
       const gender = user?.gender_interest
       try{
-        const response = await axios.get('http://localhost:8000/gendered-users', {
+        const response = await axios.get(`${BASE_API_ADD}/gendered-users`, {
           params: { gender : user?.gender_interest }
         })
         setGenderedUser(response.data)
@@ -60,7 +62,7 @@ const Dashboard = () => {
 
     const updateMatches = async (matchedUserId) => {
       try{
-        await axios.put('http://localhost:8000/addmatch', {
+        await axios.put(`${BASE_API_ADD}/addmatch`, {
           userId, 
           matchedUserId
         })

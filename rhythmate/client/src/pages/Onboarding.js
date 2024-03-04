@@ -8,6 +8,8 @@ const Onboarding = () => {
   let navigate = useNavigate()
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
+  const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
   const [formData, setFormData] = useState({
     user_id : cookies.UserId,
     first_name : '',
@@ -37,7 +39,7 @@ const Onboarding = () => {
     e.preventDefault()
 
     try{
-      const response = await axios.put('http://localhost:8000/users', { formData })
+      const response = await axios.put(`${BASE_API_ADD}/users`, { formData })
       const success = response.status===200
       console.log(response.status)
       console.log(success)

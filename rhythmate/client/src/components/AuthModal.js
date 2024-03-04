@@ -6,6 +6,8 @@ import { useCookies } from 'react-cookie'
 
 const AuthModal = ({setShowModal, isSignup}) => {
 
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [email, setEmail] = useState(null)
     const [lowerEmail, setLowerEmail] = useState(null)
     const [password, setPassword] = useState(null)
@@ -25,7 +27,7 @@ const AuthModal = ({setShowModal, isSignup}) => {
             }
             setLowerEmail(email.toLowerCase())
             // console.log(email, '->', lowerEmail)
-            const response = await axios.post(`http://localhost:8000/${isSignup? 'signup' : 'login'}`, {email, password})
+            const response = await axios.post(`${BASE_API_ADD}/${isSignup? 'signup' : 'login'}`, {email, password})
             // console.log(response.data)
             // console.log('hi')
             setCookie('AuthToken', response.data.token)

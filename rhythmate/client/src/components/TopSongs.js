@@ -4,6 +4,9 @@ import axios from "axios"
 import SongDisplay from "./SongDisplay"
 
 const TopSongs = (user_id) => {
+
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     // console.log('check-', user_id.userId)
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [isLoading, setIsLoading] = useState(true)
@@ -23,7 +26,7 @@ const TopSongs = (user_id) => {
         // console.log('mai hu GIAN')
         setIsLoading(true)
         try{
-            const response = await axios.get('http://localhost:8000/get-songs', {
+            const response = await axios.get(`${BASE_API_ADD}/get-songs`, {
                 params: {
                     user_id: user_id.userId
                 }

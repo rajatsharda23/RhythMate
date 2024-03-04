@@ -2,6 +2,9 @@ import { useState} from 'react'
 import axios from 'axios'
 
 const ChatInput = ({ user, clickedUser, getUserMessages, getClickedUsersMessages }) => {
+
+    const BASE_API_ADD = process.env.REACT_APP_BASE_CALL
+
     const [textArea, setTextArea] = useState("")
     const userId = user?.user_id
     const clickedUserId = clickedUser?.user_id
@@ -15,7 +18,7 @@ const ChatInput = ({ user, clickedUser, getUserMessages, getClickedUsersMessages
         }
 
         try {
-            await axios.post('http://localhost:8000/message', { message })
+            await axios.post(`${BASE_API_ADD}/message`, { message })
             getUserMessages()
             getClickedUsersMessages()
             setTextArea("")
