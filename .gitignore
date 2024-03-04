@@ -2,9 +2,11 @@
 
 # dependencies
 node_modules/
+.env/
 /client/node_modules
 /server/node_modules
 rhythmate/server/.env
+rhythmate/client/.env
 /.pnp
 .pnp.js
 
