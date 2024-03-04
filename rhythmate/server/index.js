@@ -308,7 +308,7 @@ app.get('/artists', async(req, res) => {
     try {
         const data = await spotifyApi.getMyTopArtists()
         let topArtists = data.body.items;
-        // console.log(topArtists);
+        // console.log('from spotify->', topArtists)
         res.json(topArtists); // 
     } catch (err) {
         console.log('Something went wrong!', err);
@@ -320,12 +320,14 @@ app.post('/top-artists', async (req,res) => {
     const client = new MongoClient(uri) 
     const { user_id, TopArtistList } = req.body;
     // console.log(user_id) 
-    // console.log(TopArtistList)
+    console.log('from DB->',TopArtistList)
     try{
         await client.connect()
         const database = client.db('RhythMatch')
         const collection = database.collection('spotify_top_artists')
         const existingTracks = await collection.findOne({ user_id: user_id });
+        // console.log('----->: ',user_id)
+        // console.log('***', existingTracks)
         // console.log('topArtistList', TopArtistList)
         const data = {
             user_id : user_id,
@@ -333,13 +335,22 @@ app.post('/top-artists', async (req,res) => {
             artist_images: TopArtistList.slice(0, 5).map(artist => artist.images[0]?.url),
             artist_urls: TopArtistList.slice(0, 5).map(artist => artist.external_urls.spotify)
         }
+       
         // console.log('ExistingTracks: ', existingTracks)
-        // console.log('data: ', data)
+        console.log('data: ', data)
+        // console.log('checkinudnbuisnvuDShv->',data.artist_name.length===0)
         if(existingTracks){
-            if(!data.artist_name.length) res.send('Access Tokern Exipred')
+            if(data.artist_name.length===0){
+                console.log('1')
+                res.send('Access Tokern Exipred')
+            } 
             else await collection.updateOne({ user_id: user_id}, { $set: data });
-        } else{
+        } else if(data.artist_name.length!==0){
+            console.log('2')
             await collection.insertOne(data)
+        } else {
+            console.log('3')
+            res.send('Unable to Connect to Mongo')
         }
         // console.log('1')
         res.status(201)
@@ -352,7 +363,7 @@ app.post('/top-artists', async (req,res) => {
 app.get('/get-artists', async (req, res) => {
     const client = new MongoClient(uri)
     const user_id = req.query.user_id
-    console.log(user_id)
+    // console.log(user_id)
     try {
         await client.connect()
         const database = client.db('RhythMatch')
@@ -391,13 +402,13 @@ app.get('/songs', async(req, res) => {
 app.post('/top-songs', async (req,res) => {
     const client = new MongoClient(uri) 
     const { user_id, TopSongsList } = req.body;
-    console.log('user_id: ', user_id) 
-    console.log('topsongs: ', TopSongsList) 
+    // console.log('user_id: ', user_id) 
+    // console.log('topsongs: ', TopSongsList) 
     try{
         await client.connect()
         const database = client.db('RhythMatch')
         const collection = database.collection('spotify_top_tracks')
-        const existingTracks = await collection.findOne({ user_id: user_id });
+        const existingTracks = await collection.findOne({ user_id: user_id })
         // console.log('topArtistList', TopArtistList)
         const data = {
             user_id : user_id,
@@ -408,7 +419,7 @@ app.post('/top-songs', async (req,res) => {
             track_img: TopSongsList.slice(0, 5).map(track => track.album.images),
         }
         // console.log('ExistingTracks: ', existingTracks)
-        console.log('data: ', data)
+        // console.log('data: ', data)
         if(existingTracks){
             if(!data.tracks_name.length) res.send('Access Tokern Exipred')
             else await collection.updateOne({ user_id: user_id}, { $set: data });

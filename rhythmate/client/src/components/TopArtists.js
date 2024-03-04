@@ -9,9 +9,9 @@ const TopArtists = (user_id) => {
     const [isLoading, setIsLoading] = useState(true)
     const [topArtist, setTopArtist] = useState({
         user_id: user_id.user_id.userId,
-        artist_name: [],
-        artist_images: [],
-        artist_url: []
+        artist_name: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection'],
+        artist_images: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection'],
+        artist_url: ['Error in Connection','Error in Connection','Error in Connection','Error in Connection','Error in Connection']
     })
 
     const userId = cookies.UserId
@@ -27,13 +27,14 @@ const TopArtists = (user_id) => {
                 }
             })
             const data = await response.data
-            console.log('DATA->', data)
+            // console.log('DATA->', data)
             setTopArtist(prevState => ({
                 ...prevState,
                 artist_name: data.artist_name,
                 artist_images: data.artist_images,
                 artist_urls: data.artist_urls
             }))
+            await new Promise(resolve => setTimeout(resolve, 3000));
             setIsLoading(false)
         } catch(err){
             setIsLoading(false)
@@ -46,7 +47,7 @@ const TopArtists = (user_id) => {
     }, [])
     
     // useEffect(() => {
-    //     // console.log('FROM DB: ',topArtist);
+    //     console.log('FROM DB: ',topArtist);
     // }, [topArtist]);
     
     return (
@@ -66,7 +67,6 @@ const TopArtists = (user_id) => {
             
             {user_id.user_id.userId===matchedUserId && 
                 <div>
-                    hello
                     <ArtistDisplay {...topArtist}/>
                     {/* {topTracks?.slice(0, 5).map((artist, index) => (
                         <div key={index}>

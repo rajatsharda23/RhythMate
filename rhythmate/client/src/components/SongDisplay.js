@@ -1,6 +1,6 @@
 const SongDisplay = ({topSong}) => {
 
-    console.log('HUm', topSong)
+    // console.log('HUm', topSong)
     return (
       <div className="relative flex flex-col font-readex"> 
 

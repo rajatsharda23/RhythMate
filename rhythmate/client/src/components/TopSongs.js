@@ -4,7 +4,7 @@ import axios from "axios"
 import SongDisplay from "./SongDisplay"
 
 const TopSongs = (user_id) => {
-    console.log('check-', user_id.userId)
+    // console.log('check-', user_id.userId)
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [isLoading, setIsLoading] = useState(true)
     const [topSong, setTopSong] = useState({
@@ -29,7 +29,7 @@ const TopSongs = (user_id) => {
                 }
             })
             const data = await response.data
-            console.log('DATA->', data)
+            // console.log('DATA->XXX', data)
             setTopSong(prevState => ({ 
                 ...prevState,
                 tracks_name: data.tracks_name,
@@ -46,17 +46,15 @@ const TopSongs = (user_id) => {
     }
 
     useEffect(() => {
-        if (user_id.userId === cookies.UserId) {
             const fetchData = async () => {
                 await getTracks()
             }
             fetchData()
-            console.log('TopSongs: ', topSong)
-        }
+            // console.log('TopSongs: ', topSong)
     }, [])
 
     useEffect(()=>{
-        console.log('url-> dede bhai' , topSong)
+        // console.log('url-> dede bhai' , topSong)
     },[])
     
 
@@ -80,7 +78,7 @@ const TopSongs = (user_id) => {
             
             {user_id.userId===matchedUserId && 
                 <div>
-                    <SongDisplay {...topSong} />
+                    <SongDisplay topSong={topSong} />
                     {/* {topTracks?.slice(0, 5).map((artist, index) => (
                         <div key={index}>
                             {artist.name}

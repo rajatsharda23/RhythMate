@@ -53,7 +53,7 @@ const Onboarding = () => {
   console.log(formData)
     return (
 
-      <div className= "relative h-full w-screen bg-cover font-readex bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-300">
+      <div className= "relative h-full w-screen bg-cover font-readex bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
          <Nav minimal={true} 
          setShowModal={() => {}} 
          showModal={false} 
@@ -203,7 +203,7 @@ const Onboarding = () => {
 
             <section className= 'flex flex-col mt-10' >
               <label htmlFor='profile' className='text-xl'>Profile Photo</label>
-              <input className="border rounded m-2 bg-indigo-100"
+              <input className="border rounded m-2 p-1 bg-indigo-100"
                 id = 'url'
                 name = 'url'
                 type = 'url'
